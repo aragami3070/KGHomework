@@ -68,6 +68,96 @@ namespace Smirnov251HW2 {
 	// Number of lines
 	unsigned int arrayLength = sizeof(lines) / sizeof(float);
 
+	float ejik[] = {
+		// нос
+		0.5f, 4.f, 0.5f, 3.8f, // нос вниз
+		0.5f, 3.8f, 0.3f, 3.6f, // нос влево вниз
+		0.3f, 3.6f, 0.1f, 4.f, // нос влево вниз
+		0.1f, 4.f, 0.5f, 4.f, // нос вниз
+		// голова
+		0.5f, 4.f, 1.1f, 4.2f, // голова от носа вправо вверх 
+		// голова: глаз: зрачок
+		1.1f, 4.2f, 1.3f, 4.2f, // зрачок вправо
+		1.3f, 4.2f, 1.5f, 4.6f, // зрачок вправо вверх
+		// голова: глаз
+		1.1f, 4.2f, 1.5f, 4.f, // глаз вправо вниз
+		1.5f, 4.f, 1.7f, 4.6f, // глаз вправо вверх
+		1.7f, 4.6f, 1.3f, 4.6f, // глаз влево
+
+		// голова
+		1.1f, 4.2f, 1.3f, 4.6f, // голова от начала глаза вправо вверх 
+		1.3f, 4.6f, 1.7f, 5.f, // голова от конца глаза вправо вверх 
+		// голова:колючки нижняя часть
+		1.7f, 5.f, 2.1f, 5.2f, //  н. колючки вправо вверх
+		2.1f, 5.2f, 1.9f, 4.6f, //  н. колючки влево вниз
+		1.9f, 4.6f, 2.3f, 5.f, //  н. колючки вправо вверх
+		2.3f, 5.f, 2.1f, 4.2f, //  н. колючки влево вниз
+		2.1f, 4.2f, 2.5f, 4.4f, //  н. колючки вправо вверх
+		2.5f, 4.4f, 2.3f, 3.8f, //  н. колючки влево вниз
+		2.3f, 3.8f, 2.7f, 4.f, //  н. колючки вправо вверх
+		2.7f, 4.f, 2.5f, 3.6f, //  н. колючки влево вниз
+		// голова
+		2.5f, 3.6f, 2.3f, 3.4f, //  голова от колючек/туловища влево вниз
+		2.3f, 3.4f, 1.9f, 3.2f, //  голова рядом с телом влево вниз
+		1.9f, 3.2f, 1.3f, 3.4f, //  голова от тела влево вверх
+		// голова: рот
+		1.3f, 3.4f, 1.9f, 3.8f, //  рот вправо вверх
+		1.9f, 3.8f, 1.9f, 4.f, //  рот вверх
+		
+		// голова
+		1.3f, 3.4f, 0.5f, 3.8f, //  голова от рта к носу влево вверх
+
+
+		// колючки верхняя часть
+		1.7f, 5.f, 1.3f, 4.8f, //  в. колючки влево вниз
+		1.3f, 4.8f, 1.5f, 5.2f, //  в. колючки вправо вверх
+		1.5f, 5.2f, 0.9f, 5.f, //  в. колючки влево вниз
+		0.9f, 5.f, 1.5f, 5.6f, //  в. колючки вправо вверх
+		1.5f, 5.6f, 1.1f, 6.f, //  в. колючки влево вверх
+		1.1f, 6.f, 1.7f, 5.8f, //  в. колючки вправо вниз
+		1.7f, 5.8f, 1.9f, 6.2f, //  в. колючки вправо вверх
+		1.9f, 6.2f, 2.1f, 5.8f, //  в. колючки вправо вниз
+		2.1f, 5.8f, 2.7f, 6.2f, //  в. колючки вправо вверх
+		2.7f, 6.2f, 2.7f, 5.8f, //  в. колючки вправо вниз
+		2.7f, 5.8f, 3.3f, 6.f, //  в. колючки вправо вверх
+		3.3f, 6.f, 3.1f, 5.6f, //  в. колючки влево вниз
+		3.1f, 5.6f, 3.7f, 5.4f, //  в. колючки вправо вниз
+		3.7f, 5.4f, 3.3f, 5.2f, //  в. колючки влево вниз
+		3.3f, 5.2f, 3.9f, 4.8f, //  в. колючки вправо вниз
+		3.9f, 4.8f, 4.f, 4.6f, //  в. колючки вправо вниз
+		4.f, 4.6f, 3.7f, 4.6f, //  в. колючки влево
+		3.7f, 4.6f, 3.9f, 4.f, //  в. колючки вправо вниз
+		3.9f, 4.f, 3.5f, 4.f, //  в. колючки влево
+		3.5f, 4.f, 3.9f, 3.8f, //  в. колючки вправо вниз
+		3.9f, 3.8f, 3.5f, 3.6f, //  в. колючки влево вниз
+		3.5f, 3.6f, 3.9f, 3.4f, //  в. колючки вправо вниз
+		3.9f, 3.4f, 3.5f, 3.2f, //  в. колючки влево вниз
+		3.5f, 3.2f, 3.9f, 2.8f, //  в. колючки вправо вниз
+		3.9f, 2.8f, 3.3f, 2.6f, //  в. колючки влево вниз
+		3.3f, 2.6f, 3.9f, 2.4f, //  в. колючки вправо вниз
+		3.9f, 2.4f, 3.5f, 2.2f, //  в. колючки влево вниз
+		3.5f, 2.2f, 3.9f, 1.8f, //  в. колючки вправо вниз
+		3.9f, 1.8f, 3.5f, 1.6f, //  в. колючки влево вниз
+		3.5f, 1.6f, 3.9f, 1.4f, //  в. колючки вправо вниз
+		3.9f, 1.4f, 3.5f, 1.162f, //  в. колючки влево вниз
+
+		// хвост
+		2.9f, 1.6f, 3.7f, 1.0f, //  хвост к в. колючкам вправо вниз
+		2.9f, 1.6f, 2.7f, 1.4f, //  хвост рядом с телом влево вниз
+		2.7f, 1.4f, 2.7f, 1.2f, //  хвост рядом с телом вниз
+		2.7f, 1.2f, 3.7f, 1.0f, //  хвост к в. колючкам вправо вниз
+
+
+
+		// тело
+		2.5f, 3.6f, 2.9f, 3.2f, // тело от колючек/головы вправо вниз
+		2.9f, 3.2f, 3.1f, 2.4f, // тело вправо вниз
+		3.1f, 2.4f, 2.9f, 1.6f, // тело влево вниз
+
+	};
+	unsigned int ejikLinesLength = sizeof(ejik) / sizeof(float);
+
+
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -120,7 +210,7 @@ namespace Smirnov251HW2 {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(284, 261);
+			this->ClientSize = System::Drawing::Size(1166, 838);
 			this->DoubleBuffered = true;
 			this->Name = L"MyForm";
 			this->Text = L"MyForm";
@@ -133,6 +223,7 @@ namespace Smirnov251HW2 {
 		}
 #pragma endregion
 	private: bool keepAspectRatio; // значение - сохранять ли соотношение сторон рисунка? 
+	private: bool choosePicture; // true - Задание, false - пример
 
 	private: System::Void MyForm_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
 		Graphics^ g = e->Graphics;
@@ -162,14 +253,23 @@ namespace Smirnov251HW2 {
 
 		// смещение в положительную сторону по оси Oy после смены знака
 		float OffsetY = ZoomY * Vy;
-		for (int i = 0; i < arrayLength; i += 4) {
-			g->DrawLine(blackPen,
-				ZoomX * lines[i], OffsetY - ZoomY * lines[i + 1],
-				ZoomX * lines[i + 2], OffsetY - ZoomY * lines[i + 3]
-			);
+		if (choosePicture) {
+			for (int i = 0; i < ejikLinesLength; i += 4) {
+				g->DrawLine(blackPen,
+					ZoomX * ejik[i], OffsetY - ZoomY * (ejik[i + 1] + 1.f),
+					ZoomX * ejik[i + 2], OffsetY - ZoomY * (ejik[i + 3] + 1.f)
+				);
+			}
+
 		}
-
-
+		else {
+			for (int i = 0; i < arrayLength; i += 4) {
+				g->DrawLine(blackPen,
+					ZoomX * lines[i], OffsetY - ZoomY * lines[i + 1],
+					ZoomX * lines[i + 2], OffsetY - ZoomY * lines[i + 3]
+				);
+			}
+		}
 	}
 	private: System::Void MyForm_Resize(System::Object^ sender, System::EventArgs^ e) {
 		Refresh();
@@ -178,14 +278,19 @@ namespace Smirnov251HW2 {
 	private: System::Void MyForm_Load(System::Object^ sender, System::EventArgs^ e) {
 		// начальное значение: сохранять соотношение сторон рисунка
 		keepAspectRatio = true;
+		
+		choosePicture = true;
 	}
 	private: System::Void MyForm_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
-
+		// Если нажата M, то меняем keepAspectRatio на противоположное значение
 		switch (e->KeyCode) {
 		case Keys::M:
 			keepAspectRatio = !keepAspectRatio;
 			break;
 
+		case Keys::N:
+			choosePicture = !choosePicture;
+			break;
 		default:
 			break;
 		}
