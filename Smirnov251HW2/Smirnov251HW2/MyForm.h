@@ -74,6 +74,7 @@ namespace Smirnov251HW2 {
 		0.5f, 3.8f, 0.3f, 3.6f, // нос влево вниз
 		0.3f, 3.6f, 0.1f, 4.f, // нос влево вниз
 		0.1f, 4.f, 0.5f, 4.f, // нос вниз
+
 		// голова
 		0.5f, 4.f, 1.1f, 4.2f, // голова от носа вправо вверх 
 		// голова: глаз: зрачок
@@ -83,7 +84,6 @@ namespace Smirnov251HW2 {
 		1.1f, 4.2f, 1.5f, 4.f, // глаз вправо вниз
 		1.5f, 4.f, 1.7f, 4.6f, // глаз вправо вверх
 		1.7f, 4.6f, 1.3f, 4.6f, // глаз влево
-
 		// голова
 		1.1f, 4.2f, 1.3f, 4.6f, // голова от начала глаза вправо вверх 
 		1.3f, 4.6f, 1.7f, 5.f, // голова от конца глаза вправо вверх 
@@ -103,7 +103,6 @@ namespace Smirnov251HW2 {
 		// голова: рот
 		1.3f, 3.4f, 1.9f, 3.8f, //  рот вправо вверх
 		1.9f, 3.8f, 1.9f, 4.f, //  рот вверх
-		
 		// голова
 		1.3f, 3.4f, 0.5f, 3.8f, //  голова от рта к носу влево вверх
 
@@ -153,6 +152,47 @@ namespace Smirnov251HW2 {
 		2.5f, 3.6f, 2.9f, 3.2f, // тело от колючек/головы вправо вниз
 		2.9f, 3.2f, 3.1f, 2.4f, // тело вправо вниз
 		3.1f, 2.4f, 2.9f, 1.6f, // тело влево вниз
+		2.7f, 1.2f, 1.9f, 1.f,  // тело влево вниз
+		// тело: нога
+		1.9f, 1.f, 1.1f, 0.8f,  // нога влево вниз
+		1.1f, 0.8f, 0.7f, 1.4f,  // нога влево вверх
+		0.7f, 1.4f, 0.9f, 2.f,  // нога вправо вверх
+		0.9f, 2.f, 1.3f, 2.2f,  // нога вправо вверх
+		1.3f, 2.2f, 1.9f, 1.f,  // нога вправо вниз
+		// тело
+		1.5f, 1.8f, 1.9f, 2.f,  // тело вправо вверх
+		// тело: по€с
+		1.8f, 2.2f, 3.05f, 2.2f,  // тело влево вверх
+		// тело
+		1.9f, 2.f, 1.7f, 2.4f,  // тело влево вверх
+		// тело: рука
+		1.7f, 2.4f, 2.5f, 2.4f,  // рука вправо
+		2.1f, 2.4f, 2.1f, 2.9f,  // рука вверх
+		1.7f, 2.8f, 2.5f, 3.f,  // рука вправо
+		1.7f, 2.8f, 1.5f, 3.f,  // рука влево вверх
+		1.5f, 3.f, 1.1f, 2.6f,  // рука влево вниз
+		1.1f, 2.6f, 1.5f, 2.2f,  // рука вправо вниз
+		1.5f, 2.2f, 1.7f, 2.4f,  // рука вправо вверх
+		1.9f, 3.2f, 1.1f, 2.8f,  // рука влево вниз
+		// тело
+		1.7f, 2.8f, 1.9f, 3.2f,  // тело влево вверх
+
+		// €блоко
+		1.3f, 2.8f, 1.04f, 2.8f,  // €блоко влево
+		1.1f, 2.6f, 0.9f, 3.2f,  // €блоко влево вверх
+		0.9f, 3.2f, 0.7f, 3.f,  // €блоко влево вниз
+		0.7f, 3.f, 1.1f, 2.6f,  // €блоко вправо вниз
+		0.9f, 2.8f, 0.5f, 2.8f,  // €блоко влево
+		0.5f, 2.8f, 0.5f, 2.6f,  // €блоко вниз
+		0.5f, 2.6f, 0.1f, 2.f,  // €блоко влево вниз
+		0.1f, 2.f, 0.1f, 1.6f,  // €блоко вниз
+		0.1f, 1.6f, 0.5f, 1.f,  // €блоко вправо вниз
+		0.5f, 1.f, 0.95f, 1.f,  // €блоко вправо
+		0.5f, 2.6f, 0.7f, 2.4f,  // €блоко вправо вниз
+		0.7f, 2.4f, 0.7f, 2.7f,  // €блоко вверх
+		0.7f, 2.7f, 0.9f, 2.8f,  // €блоко вправо вверх
+		0.7f, 2.6f, 0.9f, 2.4f,  // €блоко вправо вниз
+		0.9f, 2.4f, 1.3f, 2.4f,  // €блоко вправо вниз
 
 	};
 	unsigned int ejikLinesLength = sizeof(ejik) / sizeof(float);
@@ -210,7 +250,7 @@ namespace Smirnov251HW2 {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1166, 838);
+			this->ClientSize = System::Drawing::Size(630, 746);
 			this->DoubleBuffered = true;
 			this->Name = L"MyForm";
 			this->Text = L"MyForm";
@@ -241,23 +281,23 @@ namespace Smirnov251HW2 {
 		float aspectFig = Vx / Vy; // соотношение сторон рисунка
 		float aspectForm = Wx / Wy; // соотношение сторон окна рисовани€
 
-		float ZoomX, ZoomY;
+		float Sx, Sy;
 		if (keepAspectRatio) {
 			// коэффициенты увеличени€ при сохранении исходного соотношени€ сторон
-			ZoomX = ZoomY = aspectFig < aspectForm ? Wy / Vy : Wx / Vx;
+			Sx = Sy = aspectFig < aspectForm ? Wy / Vy : Wx / Vx;
 		}
 		else {
-			ZoomX = Wx / Vx; // коэффициент увеличени€ по оси Ox
-			ZoomY = Wy / Vy; // коэффициент увеличени€ по оси Oy
+			Sx = Wx / Vx; // коэффициент увеличени€ по оси Ox
+			Sy = Wy / Vy; // коэффициент увеличени€ по оси Oy
 		}
 
 		// смещение в положительную сторону по оси Oy после смены знака
-		float OffsetY = ZoomY * Vy;
+		float OffsetY = Sy * Vy;
 		if (choosePicture) {
 			for (int i = 0; i < ejikLinesLength; i += 4) {
 				g->DrawLine(blackPen,
-					ZoomX * ejik[i], OffsetY - ZoomY * (ejik[i + 1] + 1.f),
-					ZoomX * ejik[i + 2], OffsetY - ZoomY * (ejik[i + 3] + 1.f)
+					Sx * (ejik[i] + 2.f), OffsetY - Sy * (ejik[i + 1] + 1.f),
+					Sx * (ejik[i + 2] + 2.f), OffsetY - Sy * (ejik[i + 3] + 1.f)
 				);
 			}
 
@@ -265,8 +305,8 @@ namespace Smirnov251HW2 {
 		else {
 			for (int i = 0; i < arrayLength; i += 4) {
 				g->DrawLine(blackPen,
-					ZoomX * lines[i], OffsetY - ZoomY * lines[i + 1],
-					ZoomX * lines[i + 2], OffsetY - ZoomY * lines[i + 3]
+					Sx * lines[i], OffsetY - Sy * lines[i + 1],
+					Sx * lines[i + 2], OffsetY - Sy * lines[i + 3]
 				);
 			}
 		}
