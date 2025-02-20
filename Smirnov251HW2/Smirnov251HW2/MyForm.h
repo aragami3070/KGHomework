@@ -67,6 +67,9 @@ namespace Smirnov251HW2 {
 	};
 	// Number of lines
 	unsigned int arrayLength = sizeof(lines) / sizeof(float);
+	float Vx = 8.5f; // размер рисунка по горизонтали
+	float Vy = 8.5f; // размер рисунка по вертикали
+	float aspectFig = Vx / Vy; // соотношение сторон рисунка
 
 	float ejik[] = {
 		// нос
@@ -196,7 +199,9 @@ namespace Smirnov251HW2 {
 
 	};
 	unsigned int ejikLinesLength = sizeof(ejik) / sizeof(float);
-
+	float ejikVx = 4.f; // размер рисунка по горизонтали
+	float ejikVy = 6.2f; // размер рисунка по вертикали
+	float ejikaspectFig = ejikVx / ejikVy; // соотношение сторон рисунка
 
 	using namespace System;
 	using namespace System::ComponentModel;
@@ -250,7 +255,7 @@ namespace Smirnov251HW2 {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(630, 746);
+			this->ClientSize = System::Drawing::Size(537, 578);
 			this->DoubleBuffered = true;
 			this->Name = L"MyForm";
 			this->Text = L"MyForm";
@@ -273,40 +278,48 @@ namespace Smirnov251HW2 {
 		// Создать black Pen с толщиной = 2
 		Pen^ blackPen = gcnew Pen(Color::Black, 2);
 
-		float Vx = 8.5f; // размер рисунка по горизонтали
-		float Vy = 8.5f; // размер рисунка по вертикали
-
 		float Wx = ClientRectangle.Width; // размер окна по горизонтали
 		float Wy = ClientRectangle.Height; // размер окна по вертикали
-		float aspectFig = Vx / Vy; // соотношение сторон рисунка
 		float aspectForm = Wx / Wy; // соотношение сторон окна рисования
 
 		float Sx, Sy;
-		if (keepAspectRatio) {
-			// коэффициенты увеличения при сохранении исходного соотношения сторон
-			Sx = Sy = aspectFig < aspectForm ? Wy / Vy : Wx / Vx;
-		}
-		else {
-			Sx = Wx / Vx; // коэффициент увеличения по оси Ox
-			Sy = Wy / Vy; // коэффициент увеличения по оси Oy
-		}
 
-		// смещение в положительную сторону по оси Oy после смены знака
-		float OffsetY = Sy * Vy;
 		if (choosePicture) {
+			// Ежик
+			if (keepAspectRatio) {
+				// коэффициенты увеличения при сохранении исходного соотношения сторон
+				Sx = Sy = ejikaspectFig < aspectForm ? Wy / ejikVy : Wx / ejikVx;
+			}
+			else {
+				Sx = Wx / ejikVx; // коэффициент увеличения по оси Ox
+				Sy = Wy / ejikVy; // коэффициент увеличения по оси Oy
+			}
+			// смещение в положительную сторону по оси Oy после смены знака
+			float Ty = Sy * ejikVy;
 			for (int i = 0; i < ejikLinesLength; i += 4) {
 				g->DrawLine(blackPen,
-					Sx * (ejik[i] + 2.f), OffsetY - Sy * (ejik[i + 1] + 1.f),
-					Sx * (ejik[i + 2] + 2.f), OffsetY - Sy * (ejik[i + 3] + 1.f)
+					Sx * ejik[i], Ty - Sy * ejik[i + 1],
+					Sx * ejik[i + 2], Ty - Sy * ejik[i + 3]
 				);
 			}
 
 		}
 		else {
+			// Заяц
+			if (keepAspectRatio) {
+				// коэффициенты увеличения при сохранении исходного соотношения сторон
+				Sx = Sy = aspectFig < aspectForm ? Wy / Vy : Wx / Vx;
+			}
+			else {
+				Sx = Wx / Vx; // коэффициент увеличения по оси Ox
+				Sy = Wy / Vy; // коэффициент увеличения по оси Oy
+			}
+			// смещение в положительную сторону по оси Oy после смены знака
+			float Ty = Sy * Vy;
 			for (int i = 0; i < arrayLength; i += 4) {
 				g->DrawLine(blackPen,
-					Sx * lines[i], OffsetY - Sy * lines[i + 1],
-					Sx * lines[i + 2], OffsetY - Sy * lines[i + 3]
+					Sx * lines[i], Ty - Sy * lines[i + 1],
+					Sx * lines[i + 2], Ty - Sy * lines[i + 3]
 				);
 			}
 		}
