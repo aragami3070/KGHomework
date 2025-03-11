@@ -240,8 +240,7 @@ namespace Smirnov251HW2 {
 		// Заполнить форму аквамарином
 		g->Clear(Color::Aquamarine);
 
-		// Совмещение начального преобразования и накопленных преобразований
-		for (int i = 0; i < figure.size(); i += 4) {
+		for (int i = 0; i < figure.size(); i++) {
 			// lines - очередная ломаная линяя
 			path lines = figure[i];
 			// Создать pen с толщиной = 2
