@@ -1,75 +1,10 @@
 #pragma once
 
 namespace Smirnov251HW2 {
-	float lines[] = {
-		// голова
-		0.5f,3.f,1.f,4.5f, // от левой щеки вверх до уха
-		1.f,4.5f,0.5f,6.f, // левое ухо слева снизу вверх
-		0.5f,6.f,0.5f, 7.5f, // левое ухо слева
-		0.5f, 7.5f,1.f,8.f, // левое ухо верх слева
-		1.f,8.f,1.5f,8.f, // левое ухо верх середина
-		1.5f,8.f,2.f,7.5f, // левое ухо верх справа
-		2.f,7.5f,1.5f, 6.f, // левое ухо справа сверху вниз
-		1.5f, 6.f,1.5f,4.5f, // левое ухо справа до макушки
-		1.5f,4.5f,3.f,4.5f, // макушка
-		3.f,4.5f,3.f,6.f, // правое ухо слева снизу вверх
-		3.f,6.f,2.5f,7.5f, // правое ухо слева
-		2.5f,7.5f,3.f,8.f, // правое ухо верх слева
-		3.f,8.f,3.5f,8.f, // правое ухо верх середина
-		3.5f,8.f,4.f,7.5f, // правое ухо верх справа
-		4.f,7.5f,4.f,6.f, // правое ухо сверху вниз
-		4.f,6.f,3.5f,4.5f, // правое ухо справа
-		3.5f,4.5f,4.f,3.f, // от правого уха вниз до щеки
-		4.f,3.f,3.5f,1.5f, // правая скула
-		3.5f,1.5f,2.5f,1.f, // подбородок справа
-		2.5f,1.f,2.f,1.f, // подбородок снизу
-		2.f,1.f,1.f,1.5f, // подбородок слева
-		1.f,1.5f,0.5f,3.f, // левая скула
-		// туловище
-		4.f,3.f,5.5f,3.5f, // спина от головы вправо
-		5.5f,3.5f,7.f,3.5f, // спина верх
-		7.f,3.5f,7.5f,2.5f, // спина сверху до хвоста
-		7.5f,2.5f,8.f,2.5f, // хвост сверху
-		8.f,2.5f,8.f,2.f, // хвост справа
-		8.f,2.f,7.5f,2.f, // хвост низ справа налево
-		7.5f,2.f,7.5f,0.5f, // задняя нога справа сверху вниз
-		7.5f,0.5f,6.5f,0.5f, // задняя нога низ
-		6.5f,0.5f,6.5f,1.f, // задняя нога слева
-		6.5f,1.f,6.f,1.f, // между задних ног
-		6.f,1.f,6.f,0.5f, // левая задняя нога справа
-		6.f,0.5f,5.f,0.5f, // левая задняя нога низ
-		5.f,0.5f,5.f,1.f, // левая задняя нога слева
-		5.f,1.f,4.f,1.f, // между задними и передними ногами
-		4.f,1.f,4.f,0.5f, // правая передняя нога справа
-		4.f,0.5f,3.f,0.5f, // правая передняя нога низ
-		3.f,0.5f,3.f,1.f, // правая передняя нога слева
-		3.f,1.f,2.5f,1.f, // между передних ног
-		2.5f,1.f,2.5f,0.5f, // передняя нога справа
-		2.5f,0.5f,1.5f,0.5f, // передняя нога низ
-		1.5f,0.5f,1.5f,1.25f, // передняя нога слева
-		// левый глаз
-		1.5f,3.5f,1.5f,3.f, // левый глаз слева сверху вниз
-		1.5f,3.f,2.f,3.f, // левый глаз низ
-		2.f, 3.f,2.f,3.5f, // левый глаз справа
-		2.f,3.5f,1.5f,3.5f, // левый глаз верх
-		// правый глаз
-		2.5f,3.5f,2.5f,3.f, // правый глаз слева
-		2.5f,3.f,3.f, 3.f, // правый глаз снизу
-		3.f,3.f,3.f,3.5f, // правый глаз справа
-		3.f,3.5f,2.5f,3.5f, // правый глаз сверху
-		// ушные раковины
-		1.f,5.5f,1.f,7.f, // левая ушная раковина
-		3.5f,5.5f,3.5f,7.f, // правая ушная раковина
-		// нос
-		2.f,2.5f,2.5f,2.5f, // нос сверху
-		2.5f,2.5f,2.25f,2.f, // нос справа
-		2.25f,2.f,2.f,2.5f // нос слева
-	};
 	// Number of lines
-	unsigned int arrayLength = sizeof(lines) / sizeof(float);
-	float Vx = 8.5f; // размер рисунка по горизонтали
-	float Vy = 8.5f; // размер рисунка по вертикали
-	float aspectFig = Vx / Vy; // соотношение сторон рисунка
+	float Vx; // размер рисунка по горизонтали
+	float Vy; // размер рисунка по вертикали
+	float aspectFig; // соотношение сторон рисунка
 
 	float ejik[] = {
 		// нос
@@ -208,6 +143,8 @@ namespace Smirnov251HW2 {
 	mat3 T = mat3(1.f);
 	// Матрица начального преобразования
 	mat3 initT;
+	std::vector<path> figure;
+
 	
 	using namespace System;
 	using namespace System::ComponentModel;
@@ -241,6 +178,9 @@ namespace Smirnov251HW2 {
 				delete components;
 			}
 		}
+	private: System::Windows::Forms::OpenFileDialog^ openFileDialog;
+	private: System::Windows::Forms::Button^ btnOpen;
+	protected:
 
 	private:
 		/// <summary>
@@ -255,14 +195,33 @@ namespace Smirnov251HW2 {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->openFileDialog = (gcnew System::Windows::Forms::OpenFileDialog());
+			this->btnOpen = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
+			// 
+			// openFileDialog
+			// 
+			this->openFileDialog->Filter = L"Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*";
+			this->openFileDialog->Title = L"Открыть файл";
+			// 
+			// btnOpen
+			// 
+			this->btnOpen->Location = System::Drawing::Point(284, 24);
+			this->btnOpen->Name = L"btnOpen";
+			this->btnOpen->Size = System::Drawing::Size(75, 23);
+			this->btnOpen->TabIndex = 0;
+			this->btnOpen->Text = L"Открыть";
+			this->btnOpen->UseVisualStyleBackColor = true;
+			this->btnOpen->Click += gcnew System::EventHandler(this, &MyForm::btnOpen_Click);
 			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(402, 578);
+			this->Controls->Add(this->btnOpen);
 			this->DoubleBuffered = true;
+			this->KeyPreview = true;
 			this->Name = L"MyForm";
 			this->Text = L"MyForm";
 			this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
@@ -281,77 +240,30 @@ namespace Smirnov251HW2 {
 		// Заполнить форму аквамарином
 		g->Clear(Color::Aquamarine);
 
-		// Создать black Pen с толщиной = 2
-		Pen^ blackPen = gcnew Pen(Color::Black, 2);
-
-		float Wx = ClientRectangle.Width; // размер окна по горизонтали
-		float Wy = ClientRectangle.Height; // размер окна по вертикали
-		float aspectForm = Wx / Wy; // соотношение сторон окна рисования
-
-		float Sx, Sy;
-
-		if (choosePicture) {
-			// Ежик
-			if (keepAspectRatio) {
-				// коэффициенты увеличения при сохранении исходного соотношения сторон
-				Sx = Sy = ejikaspectFig < aspectForm ? Wy / ejikVy : Wx / ejikVx;
-			}
-			else {
-				Sx = Wx / ejikVx; // коэффициент увеличения по оси Ox
-				Sy = Wy / ejikVy; // коэффициент увеличения по оси Oy
-			}
-			// смещение в положительную сторону по оси Oy после смены знака
-			float Ty = Sy * ejikVy;
-			// Преобразования применяются справа налево, сначала масштабирование, а потом перенос
-			// В initT совмещаем эти два преобразования
-			initT = translate(0.f, Ty) * scale(Sx, -Sy);
-			// Совмещение начального преобразования и накопленных преобразований
-			mat3 M = T * initT;
-			for (int i = 0; i < ejikLinesLength; i += 4) {
-				// Начало отрезка в однородных координатах
-				vec3 A = vec3(ejik[i], ejik[i + 1], 1.f);
-				// Конец отрезка в однородных координатах
-				vec3 B = vec3(ejik[i + 2], ejik[i + 3], 1.f);
-				// Начало отрезка после преобразования
-				vec2 a = normalize(M * A);
-				// Конец отрезка после преобразования
-				vec2 b = normalize(M * B);
-				g->DrawLine(blackPen,
-					a.x, a.y,
-					b.x, b.y
+		// Совмещение начального преобразования и накопленных преобразований
+		for (int i = 0; i < figure.size(); i += 4) {
+			// lines - очередная ломаная линяя
+			path lines = figure[i];
+			// Создать pen с толщиной = 2
+			Pen^ pen = gcnew Pen(Color::FromArgb(
+					lines.color.x,
+					lines.color.y,
+					lines.color.z )
+			);
+			pen->Width = lines.thickness;
+			//Начальная точка первого отрезка
+			vec2 start = normalize(T * vec3(lines.vertices[0], 1.0));
+			// цикл по конечным точкам (от единицы)
+			for (int j = 1; j < lines.vertices.size(); j++) {
+				// конечная точка
+				vec2 end = normalize(T * vec3(lines.vertices[j], 1.0));
+				// Отрисовка отрезка 
+				g->DrawLine(pen, 
+					start.x, start.y,
+					end.x, end.y 
 				);
-			}
-		}
-		else {
-			// Заяц
-			if (keepAspectRatio) {
-				// коэффициенты увеличения при сохранении исходного соотношения сторон
-				Sx = Sy = aspectFig < aspectForm ? Wy / Vy : Wx / Vx;
-			}
-			else {
-				Sx = Wx / Vx; // коэффициент увеличения по оси Ox
-				Sy = Wy / Vy; // коэффициент увеличения по оси Oy
-			}
-			// смещение в положительную сторону по оси Oy после смены знака
-			float Ty = Sy * Vy;
-			// Преобразования применяются справа налево, сначала масштабирование, а потом перенос
-			// В initT совмещаем эти два преобразования
-			initT = translate(0.f, Ty) * scale(Sx, -Sy);
-			// Совмещение начального преобразования и накопленных преобразований
-			mat3 M = T * initT;
-			for (int i = 0; i < arrayLength; i += 4) {
-				// Начало отрезка в однородных координатах
-				vec3 A = vec3(lines[i], lines[i + 1], 1.f);
-				// Конец отрезка в однородных координатах
-				vec3 B = vec3(lines[i + 2], lines[i + 3], 1.f);
-				// Начало отрезка после преобразования
-				vec2 a = normalize(M * A);
-				// Конец отрезка после преобразования
-				vec2 b = normalize(M * B);
-				g->DrawLine(blackPen,
-					a.x, a.y,
-					b.x, b.y
-				);
+				// Конечная точка текущего отрезка становится начальной точкой следующего
+				start = end;
 			}
 		}
 	}
@@ -360,24 +272,12 @@ namespace Smirnov251HW2 {
 	}
 
 	private: System::Void MyForm_Load(System::Object^ sender, System::EventArgs^ e) {
-		// начальное значение: сохранять соотношение сторон рисунка
-		keepAspectRatio = true;
-		
-		choosePicture = true;
 	}
 	private: System::Void MyForm_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
 		// Координаты центра текущего окна
 		float Wcx = ClientRectangle.Width / 2.f; 
 		float Wcy = ClientRectangle.Height / 2.f;
-		// Если нажата M, то меняем keepAspectRatio на противоположное значение
 		switch (e->KeyCode) {
-		case Keys::M:
-			keepAspectRatio = !keepAspectRatio;
-			break;
-		// Если нажата N, то меняем choosePicture на противоположное значение (меняем рисунок)
-		case Keys::N:
-			choosePicture = !choosePicture;
-			break;
 		// Поворот рисунка на 0.01 радиан относительно нового центра
 		case Keys::Q:
 			// Перенос начала координат в (Wcx, Wcy)
@@ -402,5 +302,87 @@ namespace Smirnov251HW2 {
 		}
 		Refresh();
 	}
-	};
+	private: System::Void btnOpen_Click(System::Object^ sender, System::EventArgs^ e) {
+		if (openFileDialog->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+			// Перезапись имени файла из openFileDialog->FileName в fileName
+			wchar_t fileName[1024]; // Переменная, в которой посимвольно сохраним имя файла
+			for (int i = 0; i < openFileDialog->FileName->Length; i++) {
+				fileName[i] = openFileDialog->FileName[i];
+			}
+			fileName[openFileDialog->FileName->Length] = '\0';
+			// Объявление и открытие файла
+			std::ifstream in;
+			in.open(fileName);
+			if (in.is_open()) {
+				// Файл успешно открыт
+				// очищаем имеющийся список ломаных
+				figure.clear(); 
+				// временные переменные для чтения из файла
+				// толщина со значением по умолчанию 2
+				float thickness = 2; 
+				// составляющие цвета
+				float r, g, b; 
+				// значение составляющих цвета по умолчанию (черный)
+				r = g = b = 0;
+				std::string cmd; // строка для считывания имени команды
+				// непосредственно работа с файлом
+				std::string str; // строка, в которую считываем строки файла
+				std::getline(in, str); // считываем из входного файла первую строку
+				while (in) { // если очередная строка считана успешно
+					// обрабатываем строку
+					if ((str.find_first_not_of(" \t\r\n") != std::string::npos) && (str[0] != '#')) {
+						// прочитанная строка не пуста и не комментарий
+						std::stringstream s(str); // строковый поток из строки str
+						s >> cmd;
+						if (cmd == "frame") { // размеры изображения
+							s >> Vx >> Vy; // считываем глобальные значение Vx и Vy
+							aspectFig = Vx / Vy; // обновление соотношение сторон рисунка
+							float Wx = ClientRectangle.Width; // размер окна по горизонтали
+							float Wy = ClientRectangle.Height; // размер окна по вертикали
+							float aspectForm = Wx / Wy; // соотношение сторон окна рисования
+							// коэффициент увеличения при сохранении исходного соотношения сторон
+							float S = aspectFig < aspectForm ? Wy / Vy : Wx / Vx;
+							// смещение в положительную сторону по оси Oy после смены знака
+							float Ty = S * Vy;
+							// Преобразования применяются справа налево, сначала масштабирование, а потом перенос
+							// В initT совмещаем эти два преобразования
+							initT = translate(0.f, Ty) * scale(S, -S);
+							T = initT;
+						}
+						else if (cmd == "color") { // цвет линии
+							s >> r >> g >> b; // считываем три составляющие цвета
+						}
+						else if (cmd == "thickness") { // толщина линии
+							s >> thickness; // считываем значение толщины
+						}
+						else if (cmd == "path") { // набор точек
+							std::vector<vec2> vertices; // список точек ломаной
+							int N; // количество точек
+							s >> N;
+							std::string str1; // дополнительная строка для чтения из файла
+							while (N > 0) { // пока не все точки считали
+								getline(in, str1); // считываем в str1 из входного файла очередную строку
+								// так как файл корректный, то на конец файла проверять не нужно
+									if ((str1.find_first_not_of(" \t\r\n") != std::string::npos) && (str1[0] != '#')) {
+										// прочитанная строка не пуста и не комментарий
+										// значит в ней пара координат
+										float x, y; // переменные для считывания
+										std::stringstream s1(str1); // еще один строковый поток из строки str1
+										s1 >> x >> y;
+										vertices.push_back(vec2(x, y)); // добавляем точку в список
+										N--; // уменьшаем счетчик после успешного считывания точки
+								}
+							}
+							// все точки считаны, генерируем ломаную (path) и кладем ее в список figure
+							figure.push_back(path(vertices, vec3(r, g, b), thickness));
+						}
+					}
+					// считываем очередную строку
+					getline(in, str);
+				}
+				Refresh();
+			}
+		}
+	}
+};
 }

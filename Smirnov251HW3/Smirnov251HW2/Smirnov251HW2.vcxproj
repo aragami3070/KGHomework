@@ -127,6 +127,7 @@
     <ClInclude Include="MyForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="src\Figure.h" />
     <ClInclude Include="src\Matrix.h" />
     <ClInclude Include="src\Transform.h" />
   </ItemGroup>

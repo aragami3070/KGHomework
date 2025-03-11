@@ -1,5 +1,9 @@
 #include "src/Matrix.h"
 #include "src/Transform.h"
+#include "src/Figure.h"
+#include <vector>
+#include <fstream>
+#include <sstream>
 #include "MyForm.h"
 
 using namespace System;
