@@ -203,6 +203,12 @@ namespace Smirnov251HW2 {
 	float ejikVy = 5.9f; // размер рисунка по вертикали
 	float ejikaspectFig = ejikVx / ejikVy; // соотношение сторон рисунка
 
+	// Матрица, в которой накапливаются все преобразования 
+	// Первоначально единичная матрица
+	mat3 T = mat3(1.f);
+	// Матрица начального преобразования
+	mat3 initT;
+	
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -296,13 +302,25 @@ namespace Smirnov251HW2 {
 			}
 			// смещение в положительную сторону по оси Oy после смены знака
 			float Ty = Sy * ejikVy;
+			// Преобразования применяются справа налево, сначала масштабирование, а потом перенос
+			// В initT совмещаем эти два преобразования
+			initT = translate(0.f, Ty) * scale(Sx, -Sy);
+			// Совмещение начального преобразования и накопленных преобразований
+			mat3 M = T * initT;
 			for (int i = 0; i < ejikLinesLength; i += 4) {
+				// Начало отрезка в однородных координатах
+				vec3 A = vec3(ejik[i], ejik[i + 1], 1.f);
+				// Конец отрезка в однородных координатах
+				vec3 B = vec3(ejik[i + 2], ejik[i + 3], 1.f);
+				// Начало отрезка после преобразования
+				vec2 a = normalize(M * A);
+				// Конец отрезка после преобразования
+				vec2 b = normalize(M * B);
 				g->DrawLine(blackPen,
-					Sx * ejik[i], Ty - Sy * ejik[i + 1],
-					Sx * ejik[i + 2], Ty - Sy * ejik[i + 3]
+					a.x, a.y,
+					b.x, b.y
 				);
 			}
-
 		}
 		else {
 			// Заяц
@@ -316,10 +334,23 @@ namespace Smirnov251HW2 {
 			}
 			// смещение в положительную сторону по оси Oy после смены знака
 			float Ty = Sy * Vy;
+			// Преобразования применяются справа налево, сначала масштабирование, а потом перенос
+			// В initT совмещаем эти два преобразования
+			initT = translate(0.f, Ty) * scale(Sx, -Sy);
+			// Совмещение начального преобразования и накопленных преобразований
+			mat3 M = T * initT;
 			for (int i = 0; i < arrayLength; i += 4) {
+				// Начало отрезка в однородных координатах
+				vec3 A = vec3(lines[i], lines[i + 1], 1.f);
+				// Конец отрезка в однородных координатах
+				vec3 B = vec3(lines[i + 2], lines[i + 3], 1.f);
+				// Начало отрезка после преобразования
+				vec2 a = normalize(M * A);
+				// Конец отрезка после преобразования
+				vec2 b = normalize(M * B);
 				g->DrawLine(blackPen,
-					Sx * lines[i], Ty - Sy * lines[i + 1],
-					Sx * lines[i + 2], Ty - Sy * lines[i + 3]
+					a.x, a.y,
+					b.x, b.y
 				);
 			}
 		}
@@ -335,14 +366,36 @@ namespace Smirnov251HW2 {
 		choosePicture = true;
 	}
 	private: System::Void MyForm_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
+		// Координаты центра текущего окна
+		float Wcx = ClientRectangle.Width / 2.f; 
+		float Wcy = ClientRectangle.Height / 2.f;
 		// Если нажата M, то меняем keepAspectRatio на противоположное значение
 		switch (e->KeyCode) {
 		case Keys::M:
 			keepAspectRatio = !keepAspectRatio;
 			break;
-
+		// Если нажата N, то меняем choosePicture на противоположное значение (меняем рисунок)
 		case Keys::N:
 			choosePicture = !choosePicture;
+			break;
+		// Поворот рисунка на 0.01 радиан относительно нового центра
+		case Keys::Q:
+			// Перенос начала координат в (Wcx, Wcy)
+			T = translate(-Wcx, -Wcy) * T;
+			// Поворот на 0.01 радиан относительно нового центра
+			T = rotate(0.01f) * T;
+			// Перенос начала координат обратно
+			T = translate(Wcx, Wcy) * T;
+			break;
+		// Сдвиг изображения вверх на 1 пиксель
+		case Keys::W:
+			// Сдвиг вверх на один пиксель
+			T = translate(0.f, -1.f) * T;
+			break;
+		// Сброс всех сделанных преобразований
+		case Keys::Escape:
+			// Присвоили T единичную матрицу
+			T = mat3(1.f);
 			break;
 		default:
 			break;

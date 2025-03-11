@@ -1,3 +1,5 @@
+#include "src/Matrix.h"
+#include "src/Transform.h"
 #include "MyForm.h"
 
 using namespace System;
