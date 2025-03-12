@@ -220,6 +220,80 @@ namespace Smirnov251HW2 {
 			// Сдвиг вправо на один пиксель
 			T = translate(10.f, 0.f) * T;
 			break;
+		// Увеличение в 1.1 раз
+		case Keys::Z:
+			// Перенос начала координат в (Wcx, Wcy)
+			T = translate(-Wcx, -Wcy) * T;
+			// Увеличение в 1.1 раз
+			T = scale(1.1f) * T;
+			// Перенос начала координат обратно
+			T = translate(Wcx, Wcy) * T;
+			break;
+		// Функция обратная увеличению в 1.1 раз
+		case Keys::X:
+			// Перенос начала координат в (Wcx, Wcy)
+			T = translate(-Wcx, -Wcy) * T;
+			// Функция обратная увеличению в 1.1 раз
+			T = scale(1.f / 1.1f) * T;
+			// Перенос начала координат обратно
+			T = translate(Wcx, Wcy) * T;
+			break;
+		// Увеличение в 1.1 раз по Ox
+		case Keys::I:
+			// Перенос начала координат в (Wcx, Wcy)
+			T = translate(-Wcx, -Wcy) * T;
+			// Увеличение в 1.1 раз по Ox
+			T = scale(1.1f, 1.f) * T;
+			// Перенос начала координат обратно
+			T = translate(Wcx, Wcy) * T;
+			break;
+		// Функция обратная увеличению в 1.1 раз по Ox
+		case Keys::K:
+			// Перенос начала координат в (Wcx, Wcy)
+			T = translate(-Wcx, -Wcy) * T;
+			// Функция обратная увеличению в 1.1 раз по Ox
+			T = scale(1.f / 1.1f, 1.f) * T;
+			// Перенос начала координат обратно
+			T = translate(Wcx, Wcy) * T;
+			break;
+		// Увеличение в 1.1 раз по Oy
+		case Keys::O:
+			// Перенос начала координат в (Wcx, Wcy)
+			T = translate(-Wcx, -Wcy) * T;
+			// Увеличение в 1.1 раз по Oy
+			T = scale(1.f, 1.1f) * T;
+			// Перенос начала координат обратно
+			T = translate(Wcx, Wcy) * T;
+			break;
+		// Функция обратная увеличению в 1.1 раз по Oy
+		case Keys::L:
+			// Перенос начала координат в (Wcx, Wcy)
+			T = translate(-Wcx, -Wcy) * T;
+			// Функция обратная увеличению в 1.1  раз по Oy
+			T = scale(1.f, 1.f / 1.1f) * T;
+			// Перенос начала координат обратно
+			T = translate(Wcx, Wcy) * T;
+			break;
+		// Зеркальное отражение относительно Ox
+		case Keys::U:
+			// Перенос начала координат в (Wcx, Wcy)
+			T = translate(-Wcx, -Wcy) * T;
+			// Зеркальное отражение относительно Ox
+			T = mirrorX() * T;
+			// Перенос начала координат обратно
+			T = translate(Wcx, Wcy) * T;
+			break;
+		// Зеркальное отражение относительно Oy
+		case Keys::J:
+			// Перенос начала координат в (Wcx, Wcy)
+			T = translate(-Wcx, -Wcy) * T;
+			// Зеркальное отражение относительно Oy
+			T = mirrorY() * T;
+			// Перенос начала координат обратно
+			T = translate(Wcx, Wcy) * T;
+			break;
+
+
 		// Сброс всех сделанных преобразований
 		case Keys::Escape:
 			T = initT;
