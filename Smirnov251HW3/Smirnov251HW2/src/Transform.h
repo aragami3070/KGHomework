@@ -40,6 +40,31 @@ mat3 rotate(float theta) {
 	return *res;
 }
 
+// Отзеркаливание по Ox
+mat3 mirrorX() {
+	// Создали единичную матрицу
+	mat3* res = new mat3(1.f);
+	// 
+	(*res)[0][0] = 1.f;
+	// 
+	(*res)[1][1] = -1.f;
+	return *res;
+	
+}
+
+// Отзеркаливание по Oy
+mat3 mirrorY() {
+	// Создали единичную матрицу
+	mat3* res = new mat3(1.f);
+	// 
+	(*res)[0][0] = -1.f;
+	// 
+	(*res)[1][1] = 1.f;
+	return *res;
+	
+}
+
+
 
 
 
