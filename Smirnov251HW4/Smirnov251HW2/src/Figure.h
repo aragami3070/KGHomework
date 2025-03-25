@@ -17,3 +17,16 @@ public:
 		thickness = thickn;
 	}
 };
+
+class model {
+public:
+	// Состовляющие рисунка
+	std::vector<path> figure;
+	// Модельная матрица
+	mat3 modelM;
+
+	model(std::vector<path> fig, mat3 mat) {
+		figure = fig;
+		modelM = mat;
+	}
+};
