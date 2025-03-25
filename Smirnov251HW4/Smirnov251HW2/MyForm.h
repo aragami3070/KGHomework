@@ -17,7 +17,7 @@ namespace Smirnov251HW2 {
 	mat3 T = mat3(1.f);
 	// Матрица начального преобразования
 	mat3 initT;
-	std::vector<path> figure;
+	std::vector<model> models;
 
 	
 	using namespace System;
@@ -161,35 +161,43 @@ namespace Smirnov251HW2 {
 			Wy // Высота
 		);
 
-		for (int i = 0; i < figure.size(); i++) {
-			// lines - очередная ломаная линяя
-			path lines = figure[i];
-			// Создать pen с толщиной = 2
-			Pen^ pen = gcnew Pen(Color::FromArgb(
-					lines.color.x,
-					lines.color.y,
-					lines.color.z )
-			);
-			pen->Width = lines.thickness;
-			//Начальная точка первого отрезка
-			vec2 start = normalize(T * vec3(lines.vertices[0], 1.0));
-			// цикл по конечным точкам (от единицы)
-			for (int j = 1; j < lines.vertices.size(); j++) {
-				// конечная точка
-				vec2 end = normalize(T * vec3(lines.vertices[j], 1.0));
-				// Продублировали координаты точки для будущего использования
-				vec2 tempEnd = end;
-				// Если видим отрезок
-				if (clip(start, end, minX, minY, maxX, maxY)) { 
-					// после отсечения start и end - концы видимой части отрезка
-					// Отрисовка видимой части отрезка 
-					g->DrawLine(pen, 
-						start.x, start.y,
-						end.x, end.y 
-					);
+		// цикл по кисункам
+		for (int k = 0; k < models.size(); k++) { 
+			// Список ломаных очередного рисуна
+			std::vector<path> figure = models[k].figure;
+			// Матрица общего преобразования рисунка
+			mat3 TM = T * models[k].modelM;
+
+			for (int i = 0; i < figure.size(); i++) {
+				// lines - очередная ломаная линяя
+				path lines = figure[i];
+				// Создать pen с толщиной = 2
+				Pen^ pen = gcnew Pen(Color::FromArgb(
+						lines.color.x,
+						lines.color.y,
+						lines.color.z )
+				);
+				pen->Width = lines.thickness;
+				//Начальная точка первого отрезка
+				vec2 start = normalize(TM * vec3(lines.vertices[0], 1.0));
+				// цикл по конечным точкам (от единицы)
+				for (int j = 1; j < lines.vertices.size(); j++) {
+					// конечная точка
+					vec2 end = normalize(TM * vec3(lines.vertices[j], 1.0));
+					// Продублировали координаты точки для будущего использования
+					vec2 tempEnd = end;
+					// Если видим отрезок
+					if (clip(start, end, minX, minY, maxX, maxY)) { 
+						// после отсечения start и end - концы видимой части отрезка
+						// Отрисовка видимой части отрезка 
+						g->DrawLine(pen, 
+							start.x, start.y,
+							end.x, end.y 
+						);
+					}
+					// Конечная точка текущего отрезка становится начальной точкой следующего
+					start = tempEnd;
 				}
-				// Конечная точка текущего отрезка становится начальной точкой следующего
-				start = tempEnd;
 			}
 		}
 	}
@@ -209,38 +217,38 @@ namespace Smirnov251HW2 {
 		// Поворот рисунка на 0.01 радиан против часовой стрелке относительно нового центра
 		case Keys::Q:
 			// Перенос начала координат в (Wcx, Wcy)
-			T = translate(-Wcx, -Wcy) * T;
+			T = translate(-Wx / 2 - left, -Wy / 2 - top) * T;
 			// Поворот на 0.01 радиан против часовой стрелке относительно нового центра
 			T = rotate(0.01f) * T;
 			// Перенос начала координат обратно
-			T = translate(Wcx, Wcy) * T;
+			T = translate(Wx / 2 + left, Wy / 2 + top) * T;
 			break;
 		// Поворот рисунка на 0.01 радиан по часовой стрелке относительно нового центра
 		case Keys::E:
 			// Перенос начала координат в (Wcx, Wcy)
-			T = translate(-Wcx, -Wcy) * T;
+			T = translate(-Wx / 2 - left, -Wy / 2 - top) * T;
 			// Поворот на 0.01 радиан по часовой стрелке относительно нового центра
 			T = rotate(-0.01f) * T;
 			// Перенос начала координат обратно
-			T = translate(Wcx, Wcy) * T;
+			T = translate(Wx / 2 + left, Wy / 2 + top) * T;
 			break;
 		// Поворот рисунка на 0.05 радиан по часовой стрелке относительно нового центра
 		case Keys::R:
 			// Перенос начала координат в (Wcx, Wcy)
-			T = translate(-Wcx, -Wcy) * T;
+			T = translate(-Wx / 2 - left, -Wy / 2 - top) * T;
 			// Поворот на 0.05 радиан по часовой стрелке относительно нового центра
 			T = rotate(-0.05f) * T;
 			// Перенос начала координат обратно
-			T = translate(Wcx, Wcy) * T;
+			T = translate(Wx / 2 + left, Wy / 2 + top) * T;
 			break;
 		// Поворот рисунка на 0.05 радиан против часовой стрелке относительно нового центра
 		case Keys::Y:
 			// Перенос начала координат в (Wcx, Wcy)
-			T = translate(-Wcx, -Wcy) * T;
+			T = translate(-Wx / 2 - left, -Wy / 2 - top) * T;
 			// Поворот на 0.05 радиан против часовой стрелке относительно нового центра
 			T = rotate(0.05f) * T;
 			// Перенос начала координат обратно
-			T = translate(Wcx, Wcy) * T;
+			T = translate(Wx / 2 + left, Wy / 2 + top) * T;
 			break;
 		// Сдвиг изображения вверх на 1 пиксель
 		case Keys::W:
@@ -285,76 +293,75 @@ namespace Smirnov251HW2 {
 		// Увеличение в 1.1 раз
 		case Keys::Z:
 			// Перенос начала координат в (Wcx, Wcy)
-			T = translate(-Wcx, -Wcy) * T;
+			T = translate(-Wx / 2 - left, -Wy / 2 - top) * T;
 			// Увеличение в 1.1 раз
 			T = scale(1.1f) * T;
 			// Перенос начала координат обратно
-			T = translate(Wcx, Wcy) * T;
+			T = translate(Wx / 2 + left, Wy / 2 + top) * T;
 			break;
 		// Функция обратная увеличению в 1.1 раз
 		case Keys::X:
 			// Перенос начала координат в (Wcx, Wcy)
-			T = translate(-Wcx, -Wcy) * T;
+			T = translate(-Wx / 2 - left, -Wy / 2 - top) * T;
 			// Функция обратная увеличению в 1.1 раз
 			T = scale(1.f / 1.1f) * T;
 			// Перенос начала координат обратно
-			T = translate(Wcx, Wcy) * T;
+			T = translate(Wx / 2 + left, Wy / 2 + top) * T;
 			break;
 		// Увеличение в 1.1 раз по Ox
 		case Keys::I:
 			// Перенос начала координат в (Wcx, Wcy)
-			T = translate(-Wcx, -Wcy) * T;
+			T = translate(-Wx / 2 - left, -Wy / 2 - top) * T;
 			// Увеличение в 1.1 раз по Ox
 			T = scale(1.1f, 1.f) * T;
 			// Перенос начала координат обратно
-			T = translate(Wcx, Wcy) * T;
+			T = translate(Wx / 2 + left, Wy / 2 + top) * T;
 			break;
 		// Функция обратная увеличению в 1.1 раз по Ox
 		case Keys::K:
 			// Перенос начала координат в (Wcx, Wcy)
-			T = translate(-Wcx, -Wcy) * T;
+			T = translate(-Wx / 2 - left, -Wy / 2 - top) * T;
 			// Функция обратная увеличению в 1.1 раз по Ox
 			T = scale(1.f / 1.1f, 1.f) * T;
 			// Перенос начала координат обратно
-			T = translate(Wcx, Wcy) * T;
+			T = translate(Wx / 2 + left, Wy / 2 + top) * T;
 			break;
 		// Увеличение в 1.1 раз по Oy
 		case Keys::O:
 			// Перенос начала координат в (Wcx, Wcy)
-			T = translate(-Wcx, -Wcy) * T;
+			T = translate(-Wx / 2 - left, -Wy / 2 - top) * T;
 			// Увеличение в 1.1 раз по Oy
 			T = scale(1.f, 1.1f) * T;
 			// Перенос начала координат обратно
-			T = translate(Wcx, Wcy) * T;
+			T = translate(Wx / 2 + left, Wy / 2 + top) * T;
 			break;
 		// Функция обратная увеличению в 1.1 раз по Oy
 		case Keys::L:
 			// Перенос начала координат в (Wcx, Wcy)
-			T = translate(-Wcx, -Wcy) * T;
+			T = translate(-Wx / 2 - left, -Wy / 2 - top) * T;
 			// Функция обратная увеличению в 1.1  раз по Oy
 			T = scale(1.f, 1.f / 1.1f) * T;
 			// Перенос начала координат обратно
-			T = translate(Wcx, Wcy) * T;
+			T = translate(Wx / 2 + left, Wy / 2 + top) * T;
 			break;
 		// Зеркальное отражение относительно Ox
 		case Keys::U:
 			// Перенос начала координат в (Wcx, Wcy)
-			T = translate(-Wcx, -Wcy) * T;
+			T = translate(-Wx / 2 - left, -Wy / 2 - top) * T;
 			// Зеркальное отражение относительно Ox
 			T = mirrorX() * T;
 			// Перенос начала координат обратно
-			T = translate(Wcx, Wcy) * T;
+			T = translate(Wx / 2 + left, Wy / 2 + top) * T;
 			break;
 		// Зеркальное отражение относительно Oy
 		case Keys::J:
 			// Перенос начала координат в (Wcx, Wcy)
-			T = translate(-Wcx, -Wcy) * T;
+			T = translate(-Wx / 2 - left, -Wy / 2 - top) * T;
 			// Зеркальное отражение относительно Oy
 			T = mirrorY() * T;
 			// Перенос начала координат обратно
-			T = translate(Wcx, Wcy) * T;
+			T = translate(Wx / 2 + left, Wy / 2 + top) * T;
 			break;
-
 
 		// Сброс всех сделанных преобразований
 		case Keys::Escape:
@@ -379,7 +386,11 @@ namespace Smirnov251HW2 {
 			if (in.is_open()) {
 				// Файл успешно открыт
 				// очищаем имеющийся список ломаных
-				figure.clear(); 
+				models.clear(); 
+				mat3 M = mat3(1.f); // матрица для получения модельной матрицы
+				mat3 initM; // матрица для начального преобразования каждого рисунка
+				std::vector<mat3> transforms; // стек матриц преобразований
+				std::vector<path> figure; // список ломаных очередного рисунка
 				// временные переменные для чтения из файла
 				// толщина со значением по умолчанию 2
 				float thickness = 2; 
@@ -442,6 +453,42 @@ namespace Smirnov251HW2 {
 							}
 							// все точки считаны, генерируем ломаную (path) и кладем ее в список figure
 							figure.push_back(path(vertices, vec3(r, g, b), thickness));
+						}
+						// начало описания нового рисунка
+						else if (cmd == "model") {
+							float mVcx, mVcy, mVx, mVy; // параметры команды model
+							s >> mVcx >> mVcy >> mVx >> mVy; // считываем значения переменных
+							float S = mVx / mVy < 1 ? 2.f / mVy : 2.f / mVx;
+							// сдвиг точки привязки из начала координат в нужную позицию
+							// после которого проводим масштабирование
+							initM = scale(S) * translate(-mVcx, -mVcy);
+							figure.clear();
+							
+						}
+						else if (cmd == "figure") { // формирование новой модели
+							models.push_back(model(figure, M * initM));
+						}
+						else if (cmd == "translate") { // перенос
+							float Tx, Ty; // параметры преобразования переноса
+							s >> Tx >> Ty; // считываем параметры
+							M = translate(Tx, Ty) * M; // добавляем перенос к общему преобразованию
+						}
+						else if (cmd == "scale") { // масштабирование
+							float S; // параметр масштабирования
+							s >> S; // считываем параметр
+							M = scale(S) * M; // добавляем масштабирование к общему преобразованию
+						}
+						else if (cmd == "rotate") { // поворот
+							float theta; // угол поворота в градусах
+							s >> theta; // считываем параметр
+							M = rotate(-theta / 180.f * Math::PI) * M; // добавляем поворот к общему преобразованию
+						}
+						else if (cmd == "pushTransform") { // сохранение матрицы в стек
+							transforms.push_back(M); // сохраняем матрицу в стек
+						}
+						else if (cmd == "popTransform") { // откат к матрице из стека
+							M = transforms.back(); // получаем верхний элемент стека
+							transforms.pop_back(); // выкидываем матрицу из стека
 						}
 					}
 					// считываем очередную строку

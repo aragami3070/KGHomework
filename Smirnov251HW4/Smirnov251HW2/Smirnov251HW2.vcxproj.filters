@@ -36,4 +36,15 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Geometic.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="Ejik.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="Hare_full.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+  </ItemGroup>
 </Project>
