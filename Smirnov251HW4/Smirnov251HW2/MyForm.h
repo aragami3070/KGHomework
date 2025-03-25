@@ -122,9 +122,31 @@ namespace Smirnov251HW2 {
 #pragma endregion
 	// Расстояния до границ окна
 	private: float left = 30;
-	private: float right = 100;
-	private: float top = 20; 
-	private: float bottom = 50;
+		   float right = 100;
+		   float top = 20; 
+		   float bottom = 50;
+		   // Диапазон изменения координат x, пределы изменения x
+		   float minX = left, maxX;
+		   // Диапазон изменения координат y, пределы изменения y
+		   float minY = top, maxY;
+		   // Координаты левого нижнего угла прямоугольника
+		   float Wcx = left, Wcy;
+		   // Ширина и высота прямоугольника
+		   float Wx, Wy;
+
+	private: System::Void rectCalc() {
+		// Диапазон изменения координат x, пределы изменения x
+		maxX = ClientRectangle.Width - right;
+		// Диапазон изменения координат y, пределы изменения y
+		maxY = ClientRectangle.Height - bottom;
+		// Координаты левого нижнего угла прямоугольника
+		Wcy = maxY;
+		// Ширина прямоугольника
+		Wx = maxX - left;
+		// Высота прямоугольника
+		Wy = maxY - top;
+	}
+
 
 	private: System::Void MyForm_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
 		Graphics^ g = e->Graphics;
@@ -135,11 +157,9 @@ namespace Smirnov251HW2 {
 		g->DrawRectangle(rectPen,
 			left, // От левого
 			top, // верхнего угла отмеряем вниз и вправо
-			ClientRectangle.Width - left - right, // Ширина
-			ClientRectangle.Height - top - bottom // Высота
+			Wx, // Ширина
+			Wy // Высота
 		);
-		float minX = left, maxX = ClientRectangle.Width - right; // пределы изменения x
-		float minY = top, maxY = ClientRectangle.Height - bottom; // пределы изменения y
 
 		for (int i = 0; i < figure.size(); i++) {
 			// lines - очередная ломаная линяя
@@ -174,10 +194,12 @@ namespace Smirnov251HW2 {
 		}
 	}
 	private: System::Void MyForm_Resize(System::Object^ sender, System::EventArgs^ e) {
+		rectCalc();
 		Refresh();
 	}
 
 	private: System::Void MyForm_Load(System::Object^ sender, System::EventArgs^ e) {
+		rectCalc();
 	}
 	private: System::Void MyForm_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
 		// Координаты центра текущего окна
@@ -378,16 +400,18 @@ namespace Smirnov251HW2 {
 						if (cmd == "frame") { // размеры изображения
 							s >> Vx >> Vy; // считываем глобальные значение Vx и Vy
 							aspectFig = Vx / Vy; // обновление соотношение сторон рисунка
-							float Wx = ClientRectangle.Width; // размер окна по горизонтали
-							float Wy = ClientRectangle.Height; // размер окна по вертикали
+							float Wx = ClientRectangle.Width - left - right; // размер окна по горизонтали
+							float Wy = ClientRectangle.Height - top - bottom; // размер окна по вертикали
 							float aspectForm = Wx / Wy; // соотношение сторон окна рисования
 							// коэффициент увеличения при сохранении исходного соотношения сторон
 							float S = aspectFig < aspectForm ? Wy / Vy : Wx / Vx;
-							// смещение в положительную сторону по оси Oy после смены знака
+							// Смещение в положительную сторону по оси Ox
+							float Tx = left;
+							// Смещение в положительную сторону по оси Oy после смены знака
 							float Ty = S * Vy;
 							// Преобразования применяются справа налево, сначала масштабирование, а потом перенос
 							// В initT совмещаем эти два преобразования
-							initT = translate(0.f, Ty) * scale(S, -S);
+							initT = translate(Tx, Ty) * scale(S, -S);
 							T = initT;
 						}
 						else if (cmd == "color") { // цвет линии
