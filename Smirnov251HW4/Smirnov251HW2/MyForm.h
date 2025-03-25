@@ -403,15 +403,17 @@ namespace Smirnov251HW2 {
 							float Wx = ClientRectangle.Width - left - right; // размер окна по горизонтали
 							float Wy = ClientRectangle.Height - top - bottom; // размер окна по вертикали
 							float aspectForm = Wx / Wy; // соотношение сторон окна рисования
+							// Коэффициент увеличения при сохранении исходного соотношения сторон
+							mat3 T1 = translate(-Vx / 2, -Vy / 2);
+							// Масштабирование остается прежним, меняется только привязка
 							// коэффициент увеличения при сохранении исходного соотношения сторон
 							float S = aspectFig < aspectForm ? Wy / Vy : Wx / Vx;
-							// Смещение в положительную сторону по оси Ox
-							float Tx = left;
-							// Смещение в положительную сторону по оси Oy после смены знака
-							float Ty = S * Vy;
+							mat3 S1 = scale(S, -S);
+							// Сдвиг точки привязки из начала координат в нужную позицию
+							mat3 T2 = translate(Wx / 2 + Wcx, Wcy - Wy / 2);
 							// Преобразования применяются справа налево, сначала масштабирование, а потом перенос
 							// В initT совмещаем эти два преобразования
-							initT = translate(Tx, Ty) * scale(S, -S);
+							initT = T2 * (S1 * T1);
 							T = initT;
 						}
 						else if (cmd == "color") { // цвет линии
