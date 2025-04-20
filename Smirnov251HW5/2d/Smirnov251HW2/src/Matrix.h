@@ -156,6 +156,79 @@ vec3 normalize(vec4 v) {
     return vec3(v.x / v.a, v.y / v.a, v.z / v.a);
 }
 
+// MAT 4
+
+class mat4 {
+  public:
+    vec4 row1, row2, row3, row4;
+    // Конструкторы
+    mat4() {
+    }
+    mat4(vec4 r1, vec4 r2, vec4 r3, vec4 r4) : row1(r1), row2(r2), row3(r3), row4(r4) {
+    }
+    mat4(float a) {
+        row1 = vec4(a, 0.f, 0.f, 0.f);
+        row2 = vec4(0.f, a, 0.f, 0.f);
+        row3 = vec4(0.f, 0.f, a, 0.f);
+        row4 = vec4(0.f, 0.f, 0.f, a);
+    }
+
+    ~mat4() {
+    }
+
+    // Перегрузка []
+    vec4 &operator[](int i) {
+        // Массив значений типа vec4
+        return ((vec4 *)this)[i];
+    }
+
+    // Транспонирование
+    mat4 transpose() {
+        // Делаем временную копию матрицы
+        mat4 tmp(*this);
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                // Заменяем элементы текущего объекта их временной копии
+                (*this)[i][j] = tmp[j][i];
+            }
+        }
+        return *this;
+    }
+
+    // Умножение матрицы на вектор
+    const vec4 operator*(const vec4 &v) {
+        // Создаем новый вектор (для результата)
+        vec4 *res = new (vec4);
+        for (int i = 0; i < 4; i++) {
+            // i-й элемент вектора - скалярное произведение
+            (*res)[i] = dot((*this)[i], v);
+        }
+        return *res;
+    }
+
+    // Произведение матриц *=
+    mat4 &operator*=(const mat4 &m) {
+        // Создаем копии исходных матриц
+        mat4 A(*this), B(m);
+        // Транспонируем вторую
+        B.transpose();
+        for (int i = 0; i < 4; i++) {
+            // В i-ю строку текущего объекта записываем результат перемножения
+            // первой матрицы с i-q строкой транспонированной матрицы
+            (*this)[i] = A * B[i];
+        }
+        // Транспонируем текущий объект, получаем результат
+        return (*this).transpose();
+    }
+
+    // Произведение матриц *=
+    const mat4 operator*(const mat4 &m) {
+        return mat4(*this) *= m;
+    }
+};
+
+// MAT 3
+
 class mat3 {
   public:
     vec3 row1, row2, row3;
@@ -223,6 +296,8 @@ class mat3 {
         return mat3(*this) *= m;
     }
 };
+
+// MAT 2
 
 class mat2 {
   public:
