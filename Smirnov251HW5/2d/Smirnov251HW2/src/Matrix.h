@@ -1,5 +1,7 @@
 #pragma once
 
+// VEC 2
+
 class vec2 {
   public:
     float x, y;
@@ -44,6 +46,8 @@ float dot(vec2 v1, vec2 v2) {
     // Возвращаем их сумму
     return tmp.x + tmp.y;
 }
+
+// VEC 3
 
 class vec3 {
   public:
@@ -95,6 +99,61 @@ float dot(vec3 v1, vec3 v2) {
 // Переход из однородных координат в евклидовы
 vec2 normalize(vec3 v) {
     return vec2(v.x / v.z, v.y / v.z);
+}
+
+// VEC 4
+
+class vec4 {
+  public:
+    float x, y, z, a;
+    // Конструкторы
+    vec4() {
+    }
+    vec4(float a, float b, float c, float d) : x(a), y(b), z(c), a(d) {
+    }
+    vec4(vec3 v, float c) : vec4(v.x, v.y, v.z, c) {
+    }
+    ~vec4() {
+    }
+
+    // Умножение векторов *=
+    // НЕ ВЕКТОРНОЕ И НЕ СКАЛЯРНОЕ
+    // просто умножение (как на коэффициент)
+    vec4 &operator*=(const vec4 &v) {
+        x *= v.x;
+        y *= v.y;
+        z *= v.z;
+        a *= v.a;
+        return *this;
+    }
+
+    // Умножение векторов *
+    // НЕ ВЕКТОРНОЕ И НЕ СКАЛЯРНОЕ
+    // просто умножение (как на коэффициент)
+    const vec4 operator*(const vec4 &v) {
+        // Делаем временную копию текущего объекта, которую домножаем на данный
+        // вектор, и возвращаем ее как результат
+        return vec4(*this) *= v;
+    }
+
+    // Перегрузка []
+    float &operator[](int i) {
+        // Ссылку на текущий объект рассматриваем как ссылку на нулевой элемент
+        // массива значений типа float, после обращаемся к его i-му элементу
+        return ((float *)this)[i];
+    }
+};
+// Скалярное произведение векторов
+float dot(vec4 v1, vec4 v2) {
+    // Вычисляем произведения соответствующих координат
+    vec4 tmp = v1 * v2;
+    // Возвращаем их сумму
+    return tmp.x + tmp.y + tmp.z;
+}
+
+// Переход из однородных координат в евклидовы
+vec3 normalize(vec4 v) {
+    return vec3(v.x / v.a, v.y / v.a, v.z / v.a);
 }
 
 class mat3 {
