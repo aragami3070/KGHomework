@@ -134,12 +134,12 @@ ref class MyForm : public System::Windows::Forms::Form {
 
   private:
     float f(float x) {
-        return x * sin(std::log(x));
+        return tan(x);
     }
 
   private:
-    bool f_exists(float x) {
-        return x > 0;
+    bool f_exists(float x, float delta) {
+        return fabs(2.f * std::acos(std::cos(x)) - Math::PI) > delta;
     }
 
   private:
@@ -172,7 +172,7 @@ ref class MyForm : public System::Windows::Forms::Form {
         // координатах
         x = Vc_work.x;
 
-        bool hasStart = f_exists(x);
+        bool hasStart = f_exists(x, deltaX);
         // Если функция определена в этой точке, то
         if (hasStart) {
 
@@ -192,7 +192,7 @@ ref class MyForm : public System::Windows::Forms::Form {
             // координата x конечной точки отрезка в мировых
             // координатах
             x += deltaX;
-            bool hasEnd = f_exists(x);
+            bool hasEnd = f_exists(x, deltaX);
             // Если функция определена в этой точке, то
             if (hasEnd) {
 
