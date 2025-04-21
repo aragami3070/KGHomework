@@ -2,12 +2,18 @@
 #include "src/Clip.h"
 #include "src/Matrix.h"
 #include "src/Transform.h"
+#include <cmath>
 #include <vector>
 
 namespace Smirnov251HW2 {
-// Number of lines
-float Vx; // размер рисунка по горизонтали
-float Vy; // размер рисунка по вертикали
+
+// Под начальные значения
+vec2 Vc; // Координаты левого нижнего угла
+vec2 V;  // Размеры прямогульника в пространстве гарфика
+// Под рабочие значения
+vec2 Vc_work; // Координаты левого нижнего угла
+vec2 V_work;  // Размеры прямогульника в пространстве гарфика
+
 // Матрица, в которой накапливаются все преобразования
 // Первоначально единичная матрица
 mat3 T = mat3(1.f);
@@ -119,6 +125,24 @@ ref class MyForm : public System::Windows::Forms::Form {
     }
 
   private:
+    System::Void worldRectCalc() {
+        // Пересчитываем значение Vc_work
+        Vc_work = normalize(T * vec3(Vc, 1.f));
+        // Пересчитываем значение V_work
+        V_work = mat2(T) * V;
+    }
+
+  private:
+    float f(float x) {
+        return tan(x);
+    }
+
+  private:
+    bool f_exists(float x, float delta) {
+        return fabs(2.f * std::acos(std::cos(x)) - Math::PI) > delta;
+    }
+
+  private:
     System::Void MyForm_Paint(System::Object ^ sender,
                               System::Windows::Forms::PaintEventArgs ^ e) {
         Graphics ^ g = e->Graphics;
@@ -132,6 +156,105 @@ ref class MyForm : public System::Windows::Forms::Form {
                          Wx,   // Ширина
                          Wy    // Высота
         );
+
+        // Перо для графика
+        Pen ^ pen = gcnew Pen(Color::Blue, 1);
+        // Шаг по x в мировой системе координат
+        float deltaX = V_work.x / Wx;
+
+        // точка начала отрезка в координатах экрана
+        vec2 start;
+        // переменные для координат точки в мировой СК
+        float x, y;
+        // для начальной точки первого отрезка устанавливаем
+        // координату x
+        start.x = Wcx;
+        // координата x начальной точки первого отрезка в мировых
+        // координатах
+        x = Vc_work.x;
+
+        bool hasStart = f_exists(x, deltaX);
+        // Если функция определена в этой точке, то
+        if (hasStart) {
+
+            // координата y начальной точки в мировых координатах
+            y = f(x);
+            // вычисляем соответствующее значение в координатах экрана
+            start.y = Wcy - (y - Vc_work.y) / V_work.y * Wy;
+        }
+
+        // Пока x точки начала отрезка не достигнет правого крайнего значения в
+        // прямоугольнике на форме - maxX
+        while (start.x < maxX) {
+            // точка конца отрезка в координатах экрана
+            vec2 end;
+            // координата x отличается на единицу
+            end.x = start.x + 1.f;
+            // координата x конечной точки отрезка в мировых
+            // координатах
+            x += deltaX;
+
+            // Высота точки в прямоугольнике (доля общей высоты)
+            float deltaY;
+            // Компоненты цвета отрезка
+            float red, green, blue;
+
+            bool hasEnd = f_exists(x, deltaX);
+            // Если функция определена в этой точке, то
+            if (hasEnd) {
+
+                // координата y конечной точки в мировых координатах
+                y = f(x);
+                deltaY = (y - Vc_work.y) / V_work.y;
+                // вычисляем соответствующее значение в координатах экрана
+                end.y = Wcy - (y - Vc_work.y) / V_work.y * Wy;
+            }
+
+            // Отсечение отрезка относительно области видимости на форме,
+            // предворительно сохранив координаты конца отрезка
+            vec2 tmpEnd = end;
+            bool visible =
+                hasStart && hasEnd && clip(start, end, minX, minY, maxX, maxY);
+            hasStart = hasEnd;
+            // если отрезок видим
+            if (visible) {
+                // после отсечения, start и end - концы видимой части отрезка
+                // Нормализуем значение высоты точки на случай, если отрезок
+                // отсекался
+                if (deltaY > 1.f) {
+                    deltaY = 1.f;
+                }
+                if (deltaY < 0.f) {
+                    deltaY = 0.f;
+                }
+                // предварительное вычисление произведения
+                green = 510.f * deltaY;
+                // если точка ниже середины области видимости
+                if (deltaY < 0.5) {
+                    // компонента зеленого уже вычислена
+                    // синий дополняет зеленый
+                    blue = 255.f - green;
+                    // красный равен нулю
+                    red = 0.f;
+                }
+                // если точка не ниже середины
+                else {
+                    // синий равен нулю
+                    blue = 0.f;
+                    // вычисляем красный и зеленый
+                    red = green - 255.f;
+                    // с использованием вычисленного произведения
+                    green = 510.f - green;
+                }
+                // меняем цвет пера
+                pen->Color = Color::FromArgb(red, green, blue);
+                // отрисовка видимых частей
+                g->DrawLine(pen, start.x, start.y, end.x, end.y);
+            }
+            // конечная точка неотсеченного отрезка становится начальной точкой
+            // следующего
+            start = tmpEnd;
+        }
     }
 
   private:
@@ -142,25 +265,45 @@ ref class MyForm : public System::Windows::Forms::Form {
 
   private:
     System::Void MyForm_Load(System::Object ^ sender, System::EventArgs ^ e) {
+        // Задаем квадрат со стороной 4, с центром в начале координат
+        Vc = vec2(-2.f, -2.f);
+        V = vec2(4.f, 4.f);
+
         initT = mat3(1.f);
         T = initT;
+
         rectCalc();
+        worldRectCalc();
     }
 
   private:
     System::Void MyForm_KeyDown(System::Object ^ sender,
                                 System::Windows::Forms::KeyEventArgs ^ e) {
-        // Координаты центра текущего окна
-        float Wcx = ClientRectangle.Width / 2.f;
-        float Wcy = ClientRectangle.Height / 2.f;
+        // координаты центра прямоугольника
+        float centerX = Vc_work.x + V_work.x / 2;
+        // в мировой системе координат
+        float centerY = Vc_work.y + V_work.y / 2;
         switch (e->KeyCode) {
         // Сброс всех сделанных преобразований
         case Keys::Escape:
             T = initT;
             break;
+        case Keys::A:
+            // сдвиг графика вправо на один пиксел
+            T = translate(-V_work.x / Wx, 0.f) * T;
+            break;
+        case Keys::Z:
+            // перенос начала координат в центр
+            T = translate(-centerX, -centerY) * T;
+            // масштабирование относительно начала координат
+            T = scale(1.1) * T;
+            // возврат позиции начала координат
+            T = translate(centerX, centerY) * T;
+            break;
         default:
             break;
         }
+        worldRectCalc();
         Refresh();
     }
 };
