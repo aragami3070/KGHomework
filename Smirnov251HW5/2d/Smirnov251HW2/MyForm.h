@@ -2,6 +2,7 @@
 #include "src/Clip.h"
 #include "src/Matrix.h"
 #include "src/Transform.h"
+#include <cmath>
 #include <vector>
 
 namespace Smirnov251HW2 {
@@ -133,7 +134,12 @@ ref class MyForm : public System::Windows::Forms::Form {
 
   private:
     float f(float x) {
-        return x * sin(x);
+        return x * sin(std::log(x));
+    }
+
+  private:
+    bool f_exists(float x) {
+        return x > 0;
     }
 
   private:
@@ -165,10 +171,16 @@ ref class MyForm : public System::Windows::Forms::Form {
         // координата x начальной точки первого отрезка в мировых
         // координатах
         x = Vc_work.x;
-        // координата y начальной точки в мировых координатах
-        y = f(x);
-        // вычисляем соответствующее значение в координатах экрана
-        start.y = Wcy - (y - Vc_work.y) / V_work.y * Wy;
+
+        bool hasStart = f_exists(x);
+        // Если функция определена в этой точке, то
+        if (hasStart) {
+
+            // координата y начальной точки в мировых координатах
+            y = f(x);
+            // вычисляем соответствующее значение в координатах экрана
+            start.y = Wcy - (y - Vc_work.y) / V_work.y * Wy;
+        }
 
         // Пока x точки начала отрезка не достигнет правого крайнего значения в
         // прямоугольнике на форме - maxX
@@ -180,15 +192,21 @@ ref class MyForm : public System::Windows::Forms::Form {
             // координата x конечной точки отрезка в мировых
             // координатах
             x += deltaX;
-            // координата y конечной точки в мировых координатах
-            y = f(x);
-            // вычисляем соответствующее значение в координатах экрана
-            end.y = Wcy - (y - Vc_work.y) / V_work.y * Wy;
+            bool hasEnd = f_exists(x);
+            // Если функция определена в этой точке, то
+            if (hasEnd) {
+
+                // координата y конечной точки в мировых координатах
+                y = f(x);
+                // вычисляем соответствующее значение в координатах экрана
+                end.y = Wcy - (y - Vc_work.y) / V_work.y * Wy;
+            }
 
             // Отсечение отрезка относительно области видимости на форме,
             // предворительно сохранив координаты конца отрезка
             vec2 tmpEnd = end;
-            bool visible = clip(start, end, minX, minY, maxX, maxY);
+            bool visible = hasStart && hasEnd && clip(start, end, minX, minY, maxX, maxY);
+            hasStart = hasEnd;
             // если отрезок видим
             if (visible) {
                 // после отсечения, start и end - концы видимой части отрезка
