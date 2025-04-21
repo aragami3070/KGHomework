@@ -428,24 +428,24 @@ ref class MyForm : public System::Windows::Forms::Form {
             T = translate(-V_work.x / Wx, 0.f, 0.f) * T;
             break;
         case Keys::D:
-            T = translate(V_work.x / Wx, 0.f, 0.f) *
-                T; // сдвиг графика влево на один пиксел
+            // сдвиг графика влево на один пиксел
+            T = translate(V_work.x / Wx, 0.f, 0.f) * T;
             break;
         case Keys::W:
-            T = translate(0.f, 0.f, -V_work.z / sqrt(Wx * Wx + Wy * Wy)) *
-                T; // сдвиг графика вправо на один пиксел
+            // сдвиг графика вправо на один пиксел
+            T = translate(0.f, 0.f, -V_work.z / sqrt(Wx * Wx + Wy * Wy)) * T;
             break;
         case Keys::S:
-            T = translate(0.f, 0.f, V_work.z / sqrt(Wx * Wx + Wy * Wy)) *
-                T; // сдвиг графика вправо на один пиксел
+            // сдвиг графика вправо на один пиксел
+            T = translate(0.f, 0.f, V_work.z / sqrt(Wx * Wx + Wy * Wy)) * T;
             break;
         case Keys::R:
-            T = translate(0.f, -V_work.y / Wy, 0.f) *
-                T; // сдвиг графика влево на один пиксел
+            // сдвиг графика влево на один пиксел
+            T = translate(0.f, -V_work.y / Wy, 0.f) * T;
             break;
         case Keys::F:
-            T = translate(0.f, V_work.y / Wy, 0.f) *
-                T; // сдвиг графика влево на один пиксел
+            // сдвиг графика влево на один пиксел
+            T = translate(0.f, V_work.y / Wy, 0.f) * T;
             break;
         case Keys::Z:
             // перенос начала координат в центр
@@ -456,12 +456,12 @@ ref class MyForm : public System::Windows::Forms::Form {
             T = translate(centerX, centerY, centerZ) * T;
             break;
         case Keys::X:
-            T = translate(-centerX, -centerY, -centerZ) *
-                T; // перенос начала координат в центр
-            T = scale(1 / 1.1, 1 / 1.1, 1 / 1.1) *
-                T; // масштабирование относительно начала координат
-            T = translate(centerX, centerY, centerZ) *
-                T; // возврат позиции начала координат
+            // перенос начала координат в центр
+            T = translate(-centerX, -centerY, -centerZ) * T;
+            // масштабирование относительно начала координат
+            T = scale(1 / 1.1, 1 / 1.1, 1 / 1.1) * T;
+            // возврат позиции начала координат
+            T = translate(centerX, centerY, centerZ) * T;
             break;
         case Keys::Q:
             Wx_part = std::min(0.9, Wx_part * 1.1);
@@ -476,52 +476,52 @@ ref class MyForm : public System::Windows::Forms::Form {
             Wy_part = std::max(0.2, Wy_part / 1.1);
             break;
         case Keys::T:
-            T = translate(-centerX, -centerY, -centerZ) *
-                T; // перенос начала координат в центр
-            T = scale(1.1, 1, 1) *
-                T; // масштабирование относительно начала координат
-            T = translate(centerX, centerY, centerZ) *
-                T; // возврат позиции начала координат
+            // перенос начала координат в центр
+            T = translate(-centerX, -centerY, -centerZ) * T;
+            // масштабирование относительно начала координат
+            T = scale(1.1, 1, 1) * T;
+            // возврат позиции начала координат
+            T = translate(centerX, centerY, centerZ) * T;
             break;
         case Keys::G:
-            T = translate(-centerX, -centerY, -centerZ) *
-                T; // перенос начала координат в центр
-            T = scale(1 / 1.1, 1, 1) *
-                T; // масштабирование относительно начала координат
-            T = translate(centerX, centerY, centerZ) *
-                T; // возврат позиции начала координат
+            // перенос начала координат в центр
+            T = translate(-centerX, -centerY, -centerZ) * T;
+            // масштабирование относительно начала координат
+            T = scale(1 / 1.1, 1, 1) * T;
+            // возврат позиции начала координат
+            T = translate(centerX, centerY, centerZ) * T;
             break;
         case Keys::Y:
-            T = translate(-centerX, -centerY, -centerZ) *
-                T; // перенос начала координат в центр
-            T = scale(1, 1.1, 1) *
-                T; // масштабирование относительно начала координат
-            T = translate(centerX, centerY, centerZ) *
-                T; // возврат позиции начала координат
+            // перенос начала координат в центр
+            T = translate(-centerX, -centerY, -centerZ) * T;
+            // масштабирование относительно начала координат
+            T = scale(1, 1.1, 1) * T;
+            // возврат позиции начала координат
+            T = translate(centerX, centerY, centerZ) * T;
             break;
         case Keys::H:
-            T = translate(-centerX, -centerY, -centerZ) *
-                T; // перенос начала координат в центр
-            T = scale(1, 1 / 1.1, 1) *
-                T; // масштабирование относительно начала координат
-            T = translate(centerX, centerY, centerZ) *
-                T; // возврат позиции начала координат
+            // перенос начала координат в центр
+            T = translate(-centerX, -centerY, -centerZ) * T;
+            // масштабирование относительно начала координат
+            T = scale(1, 1 / 1.1, 1) * T;
+            // возврат позиции начала координат
+            T = translate(centerX, centerY, centerZ) * T;
             break;
         case Keys::U:
-            T = translate(-centerX, -centerY, -centerZ) *
-                T; // перенос начала координат в центр
-            T = scale(1, 1, 1.1) *
-                T; // масштабирование относительно начала координат
-            T = translate(centerX, centerY, centerZ) *
-                T; // возврат позиции начала координат
+            // перенос начала координат в центр
+            T = translate(-centerX, -centerY, -centerZ) * T;
+            // масштабирование относительно начала координат
+            T = scale(1, 1, 1.1) * T;
+            // возврат позиции начала координат
+            T = translate(centerX, centerY, centerZ) * T;
             break;
         case Keys::J:
-            T = translate(-centerX, -centerY, -centerZ) *
-                T; // перенос начала координат в центр
-            T = scale(1, 1, 1 / 1.1) *
-                T; // масштабирование относительно начала координат
-            T = translate(centerX, centerY, centerZ) *
-                T; // возврат позиции начала координат
+            // перенос начала координат в центр
+            T = translate(-centerX, -centerY, -centerZ) * T;
+            // масштабирование относительно начала координат
+            T = scale(1, 1, 1 / 1.1) * T;
+            // возврат позиции начала координат
+            T = translate(centerX, centerY, centerZ) * T;
             break;
         case Keys::D1:
             numXsect++;
