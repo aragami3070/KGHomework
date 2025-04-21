@@ -215,7 +215,6 @@ ref class MyForm : public System::Windows::Forms::Form {
             vec2 tmpEnd = end;
             bool visible =
                 hasStart && hasEnd && clip(start, end, minX, minY, maxX, maxY);
-            hasStart = hasEnd;
             // если отрезок видим
             if (visible) {
                 // после отсечения, start и end - концы видимой части отрезка
@@ -254,6 +253,7 @@ ref class MyForm : public System::Windows::Forms::Form {
             // конечная точка неотсеченного отрезка становится начальной точкой
             // следующего
             start = tmpEnd;
+            hasStart = hasEnd;
         }
     }
 

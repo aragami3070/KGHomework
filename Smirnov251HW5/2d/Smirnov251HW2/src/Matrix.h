@@ -243,6 +243,12 @@ class mat3 {
         row2 = vec3(0.f, a, 0.f);
         row3 = vec3(0.f, 0.f, a);
     }
+	mat3(mat4 m) {
+		row1 = vec3(m.row1.x, m.row1.y, m.row1.z);
+		row2 = vec3(m.row2.x, m.row2.y, m.row2.z);
+		row3 = vec3(m.row3.x, m.row3.y, m.row3.z);
+	}
+
 
     ~mat3() {
     }
