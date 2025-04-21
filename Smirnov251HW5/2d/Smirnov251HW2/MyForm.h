@@ -161,6 +161,7 @@ ref class MyForm : public System::Windows::Forms::Form {
         Pen ^ pen = gcnew Pen(Color::Blue, 1);
         // Шаг по x в мировой системе координат
         float deltaX = V_work.x / Wx;
+
         // точка начала отрезка в координатах экрана
         vec2 start;
         // переменные для координат точки в мировой СК
@@ -192,12 +193,19 @@ ref class MyForm : public System::Windows::Forms::Form {
             // координата x конечной точки отрезка в мировых
             // координатах
             x += deltaX;
+
+            // Высота точки в прямоугольнике (доля общей высоты)
+            float deltaY;
+            // Компоненты цвета отрезка
+            float red, green, blue;
+
             bool hasEnd = f_exists(x, deltaX);
             // Если функция определена в этой точке, то
             if (hasEnd) {
 
                 // координата y конечной точки в мировых координатах
                 y = f(x);
+                deltaY = (y - Vc_work.y) / V_work.y;
                 // вычисляем соответствующее значение в координатах экрана
                 end.y = Wcy - (y - Vc_work.y) / V_work.y * Wy;
             }
@@ -205,11 +213,41 @@ ref class MyForm : public System::Windows::Forms::Form {
             // Отсечение отрезка относительно области видимости на форме,
             // предворительно сохранив координаты конца отрезка
             vec2 tmpEnd = end;
-            bool visible = hasStart && hasEnd && clip(start, end, minX, minY, maxX, maxY);
+            bool visible =
+                hasStart && hasEnd && clip(start, end, minX, minY, maxX, maxY);
             hasStart = hasEnd;
             // если отрезок видим
             if (visible) {
                 // после отсечения, start и end - концы видимой части отрезка
+                // Нормализуем значение высоты точки на случай, если отрезок
+                // отсекался
+                if (deltaY > 1.f) {
+                    deltaY = 1.f;
+                }
+                if (deltaY < 0.f) {
+                    deltaY = 0.f;
+                }
+                // предварительное вычисление произведения
+                green = 510.f * deltaY;
+                // если точка ниже середины области видимости
+                if (deltaY < 0.5) {
+                    // компонента зеленого уже вычислена
+                    // синий дополняет зеленый
+                    blue = 255.f - green;
+                    // красный равен нулю
+                    red = 0.f;
+                }
+                // если точка не ниже середины
+                else {
+                    // синий равен нулю
+                    blue = 0.f;
+                    // вычисляем красный и зеленый
+                    red = green - 255.f;
+                    // с использованием вычисленного произведения
+                    green = 510.f - green;
+                }
+                // меняем цвет пера
+                pen->Color = Color::FromArgb(red, green, blue);
                 // отрисовка видимых частей
                 g->DrawLine(pen, start.x, start.y, end.x, end.y);
             }
