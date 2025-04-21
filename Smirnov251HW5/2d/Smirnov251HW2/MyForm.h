@@ -132,6 +132,11 @@ ref class MyForm : public System::Windows::Forms::Form {
     }
 
   private:
+    float f(float x) {
+        return x * sin(x);
+    }
+
+  private:
     System::Void MyForm_Paint(System::Object ^ sender,
                               System::Windows::Forms::PaintEventArgs ^ e) {
         Graphics ^ g = e->Graphics;
