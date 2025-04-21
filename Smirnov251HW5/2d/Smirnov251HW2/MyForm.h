@@ -5,9 +5,14 @@
 #include <vector>
 
 namespace Smirnov251HW2 {
-// Number of lines
-float Vx; // размер рисунка по горизонтали
-float Vy; // размер рисунка по вертикали
+
+// Под начальные значения
+vec2 Vc; // Координаты левого нижнего угла
+vec2 V;  // Размеры прямогульника в пространстве гарфика
+// Под рабочие значения
+vec2 Vc_work; // Координаты левого нижнего угла
+vec2 V_work;  // Размеры прямогульника в пространстве гарфика
+
 // Матрица, в которой накапливаются все преобразования
 // Первоначально единичная матрица
 mat3 T = mat3(1.f);
@@ -119,6 +124,14 @@ ref class MyForm : public System::Windows::Forms::Form {
     }
 
   private:
+    System::Void worldRectCalc() {
+        // Пересчитываем значение Vc_work
+        Vc_work = normalize(T * vec3(Vc, 1.f));
+        // Пересчитываем значение V_work
+        V_work = mat2(T) * V;
+    }
+
+  private:
     System::Void MyForm_Paint(System::Object ^ sender,
                               System::Windows::Forms::PaintEventArgs ^ e) {
         Graphics ^ g = e->Graphics;
@@ -142,9 +155,15 @@ ref class MyForm : public System::Windows::Forms::Form {
 
   private:
     System::Void MyForm_Load(System::Object ^ sender, System::EventArgs ^ e) {
+        // Задаем квадрат со стороной 4, с центром в начале координат
+        Vc = vec2(-2.f, -2.f);
+        V = vec2(4.f, 4.f);
+
         initT = mat3(1.f);
         T = initT;
+
         rectCalc();
+        worldRectCalc();
     }
 
   private:
