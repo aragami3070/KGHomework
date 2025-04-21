@@ -109,6 +109,7 @@ ref class MyForm : public System::Windows::Forms::Form {
     float Wcx = left, Wcy;
     // Ширина и высота прямоугольника
     float Wx, Wy;
+    int numXsect = 5, numYsect = 5;
 
   private:
     System::Void rectCalc() {
@@ -157,8 +158,49 @@ ref class MyForm : public System::Windows::Forms::Form {
                          Wy    // Высота
         );
 
+        Pen ^ gridPen = gcnew Pen(Color::Black, 1);
+        SolidBrush ^ drawBrush = gcnew SolidBrush(Color::Black);
+        System::Drawing::Font ^ drawFont =
+            gcnew System::Drawing::Font("Arial", 8);
+
+        float gridStep_x = Wx / numXsect; // расстояние между линиями сетки по x
+        float grid_dX = V_work.x / numXsect; // расстояние между линиями сетки
+                                             // по x в мировых координатах
+
+        float tick_x = Vc_work.x; // значение соответствующее первой линии сетки
+        for (int i = 0; i <= numXsect; i++) { // цикл по количеству линий
+
+            float tmpXCoord_v =
+                Wcx + i * gridStep_x; // координата x i-й вертикальной линии
+            // i-я вертикальная линия
+            g->DrawLine(gridPen, tmpXCoord_v, Wcy, tmpXCoord_v, minY);
+            if (i > 0 && i < numXsect) // если линия не крайняя
+                // выводим текст в нижней точке диагональной линии
+                g->DrawString(tick_x.ToString("F4"), drawFont, drawBrush,
+                              tmpXCoord_v, Wcy);
+            tick_x +=
+                grid_dX; // вычисляем значение, соответствующее следующей линии
+        }
+        float gridStep_y = Wy / numYsect;
+        float grid_dY = V_work.y / numYsect;
+        float tick_y = Vc_work.y;
+        for (int i = 0; i <= numYsect; i++) { // цикл по количеству линий
+            float tmpYCoord_g =
+                Wcy + i * gridStep_y; // координата y горизонтальных линий
+
+            // i-я горизонтальная линия
+            g->DrawLine(gridPen, Wcx, tmpYCoord_g - Wy, Wcx + Wx,
+                        tmpYCoord_g - Wy);
+
+            if (i > 0 && i < numYsect) // если линия не крайняя
+                // выводим текст в правой точке горизонтальной линии
+                g->DrawString(tick_y.ToString("F4"), drawFont, drawBrush, maxX,
+                              tmpYCoord_g - Wy);
+            tick_y +=
+                grid_dY; // вычисляем значение, соответствующее следующей линии
+        }
         // Перо для графика
-        Pen ^ pen = gcnew Pen(Color::Blue, 1);
+        Pen ^ pen = gcnew Pen(Color::Blue, 3);
         // Шаг по x в мировой системе координат
         float deltaX = V_work.x / Wx;
 
@@ -292,6 +334,18 @@ ref class MyForm : public System::Windows::Forms::Form {
             // сдвиг графика вправо на один пиксел
             T = translate(-V_work.x / Wx, 0.f) * T;
             break;
+        case Keys::D:
+            // сдвиг графика вправо на один пиксел
+            T = translate(V_work.x / Wx, 0.f) * T;
+            break;
+        case Keys::S:
+            // сдвиг графика вправо на один пиксел
+            T = translate(0.f, -V_work.y / Wy) * T;
+            break;
+        case Keys::W:
+            // сдвиг графика вправо на один пиксел
+            T = translate(0.f, V_work.y / Wy) * T;
+            break;
         case Keys::Z:
             // перенос начала координат в центр
             T = translate(-centerX, -centerY) * T;
@@ -300,11 +354,105 @@ ref class MyForm : public System::Windows::Forms::Form {
             // возврат позиции начала координат
             T = translate(centerX, centerY) * T;
             break;
+        case Keys::X:
+            // перенос начала координат в центр
+            T = translate(-centerX, -centerY) * T;
+
+            T = scale(1 / 1.1) *
+                T; // масштабирование относительно начала координат
+
+            T = translate(centerX, centerY) *
+                T; // возврат позиции начала координат
+            break;
+        case Keys::T:
+
+            T = translate(-centerX, -centerY) *
+                T; // перенос начала координат в центр
+
+            T = scale(1.1, 1) *
+                T; // масштабирование относительно начала координат
+
+            T = translate(centerX, centerY) *
+                T; // возврат позиции начала координат
+            break;
+        case Keys::G:
+
+            T = translate(-centerX, -centerY) *
+                T; // перенос начала координат в центр
+
+            T = scale(1 / 1.1, 1) *
+                T; // масштабирование относительно начала координат
+
+            T = translate(centerX, centerY) *
+                T; // возврат позиции начала координат
+            break;
+        case Keys::Y:
+
+            T = translate(-centerX, -centerY) *
+                T; // перенос начала координат в центр
+
+            T = scale(1, 1.1) *
+                T; // масштабирование относительно начала координат
+
+            T = translate(centerX, centerY) *
+                T; // возврат позиции начала координат
+            break;
+        case Keys::H:
+
+            T = translate(-centerX, -centerY) *
+                T; // перенос начала координат в центр
+
+            T = scale(1, 1 / 1.1) *
+                T; // масштабирование относительно начала координат
+
+            T = translate(centerX, centerY) *
+                T; // возврат позиции начала координат
+            break;
+        case Keys::D1:
+            numXsect++;
+            break;
+        case Keys::D2:
+            numXsect = std::max(2, numXsect - 1);
+            break;
+        case Keys::D3:
+            numYsect++;
+            break;
+        case Keys::D4:
+            numYsect = std::max(2, numYsect - 1);
+        case Keys::Q:
+            T = translate(-centerX, -centerY) *
+                T; // перенос начала координат в центр
+            T = rotate(0.1f) * T;
+            T = translate(centerX, centerY) *
+                T; // возврат позиции начала координат
+            break;
+        case Keys::E:
+            T = translate(-centerX, -centerY) *
+                T; // перенос начала координат в центр
+            T = rotate(-0.1f) * T;
+            T = translate(centerX, centerY) *
+                T; // возврат позиции начала координат
+            break;
+        case Keys::U:
+            T = translate(-centerX, -centerY) *
+                T; // перенос начала координат в центр
+            T = scale(-1.f, 1.f) *
+                T; // масштабирование относительно начала координат
+            T = translate(centerX, centerY) *
+                T; // возврат позиции начала координат
+            break;
+        case Keys::J:
+            T = translate(-centerX, -centerY) *
+                T; // перенос начала координат в центр
+            T = scale(1.f, -1.f) *
+                T; // масштабирование относительно начала координат
+            T = translate(centerX, centerY) *
+                T; // возврат позиции начала координат
         default:
             break;
         }
-        worldRectCalc();
         Refresh();
+        worldRectCalc();
     }
 };
 } // namespace Smirnov251HW2
