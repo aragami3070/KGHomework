@@ -164,7 +164,8 @@ class mat4 {
     // Конструкторы
     mat4() {
     }
-    mat4(vec4 r1, vec4 r2, vec4 r3, vec4 r4) : row1(r1), row2(r2), row3(r3), row4(r4) {
+    mat4(vec4 r1, vec4 r2, vec4 r3, vec4 r4)
+        : row1(r1), row2(r2), row3(r3), row4(r4) {
     }
     mat4(float a) {
         row1 = vec4(a, 0.f, 0.f, 0.f);

@@ -150,6 +150,55 @@ ref class MyForm : public System::Windows::Forms::Form {
                          Wx,   // Ширина
                          Wy    // Высота
         );
+
+        // Перо для графика
+        Pen ^ pen = gcnew Pen(Color::Blue, 1);
+        // Шаг по x в мировой системе координат
+        float deltaX = V_work.x / Wx;
+        // точка начала отрезка в координатах экрана
+        vec2 start;
+        // переменные для координат точки в мировой СК
+        float x, y;
+        // для начальной точки первого отрезка устанавливаем
+        // координату x
+        start.x = Wcx;
+        // координата x начальной точки первого отрезка в мировых
+        // координатах
+        x = Vc_work.x;
+        // координата y начальной точки в мировых координатах
+        y = f(x);
+        // вычисляем соответствующее значение в координатах экрана
+        start.y = Wcy - (y - Vc_work.y) / V_work.y * Wy;
+
+        // Пока x точки начала отрезка не достигнет правого крайнего значения в
+        // прямоугольнике на форме - maxX
+        while (start.x < maxX) {
+            // точка конца отрезка в координатах экрана
+            vec2 end;
+            // координата x отличается на единицу
+            end.x = start.x + 1.f;
+            // координата x конечной точки отрезка в мировых
+            // координатах
+            x += deltaX;
+            // координата y конечной точки в мировых координатах
+            y = f(x);
+            // вычисляем соответствующее значение в координатах экрана
+            end.y = Wcy - (y - Vc_work.y) / V_work.y * Wy;
+
+            // Отсечение отрезка относительно области видимости на форме,
+            // предворительно сохранив координаты конца отрезка
+            vec2 tmpEnd = end;
+            bool visible = clip(start, end, minX, minY, maxX, maxY);
+            // если отрезок видим
+            if (visible) {
+                // после отсечения, start и end - концы видимой части отрезка
+                // отрисовка видимых частей
+                g->DrawLine(pen, start.x, start.y, end.x, end.y);
+            }
+            // конечная точка неотсеченного отрезка становится начальной точкой
+            // следующего
+            start = tmpEnd;
+        }
     }
 
   private:
@@ -174,17 +223,31 @@ ref class MyForm : public System::Windows::Forms::Form {
   private:
     System::Void MyForm_KeyDown(System::Object ^ sender,
                                 System::Windows::Forms::KeyEventArgs ^ e) {
-        // Координаты центра текущего окна
-        float Wcx = ClientRectangle.Width / 2.f;
-        float Wcy = ClientRectangle.Height / 2.f;
+        // координаты центра прямоугольника
+        float centerX = Vc_work.x + V_work.x / 2;
+        // в мировой системе координат
+        float centerY = Vc_work.y + V_work.y / 2;
         switch (e->KeyCode) {
         // Сброс всех сделанных преобразований
         case Keys::Escape:
             T = initT;
             break;
+        case Keys::A:
+            // сдвиг графика вправо на один пиксел
+            T = translate(-V_work.x / Wx, 0.f) * T;
+            break;
+        case Keys::Z:
+            // перенос начала координат в центр
+            T = translate(-centerX, -centerY) * T;
+            // масштабирование относительно начала координат
+            T = scale(1.1) * T;
+            // возврат позиции начала координат
+            T = translate(centerX, centerY) * T;
+            break;
         default:
             break;
         }
+        worldRectCalc();
         Refresh();
     }
 };
