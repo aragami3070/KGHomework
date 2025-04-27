@@ -333,7 +333,7 @@ ref class MyForm : public System::Windows::Forms::Form {
                 vec2 tmpEnd = end;
                 bool visible =
                     hasStart && hasEnd &&
-                    clip(start, end, Wcx_w - Wx_work, Wcy_w - Wy_work,
+                    clip(start, end, Wcx_w - Wx_work, 0,
                          Wcx_w + Wx_work, Wcy_w + Wy_work);
                 // если отрезок видим
                 if (visible) {
