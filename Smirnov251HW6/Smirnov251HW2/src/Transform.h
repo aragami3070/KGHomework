@@ -145,3 +145,10 @@ mat4 frustum(float l, float r, float b, float t, float n, float f) {
                 vec4(0.f, 0.f, -(f + n) / (f - n), -2.f / (f - n)),
                 vec4(0.f, 0.f, -1.f, 0.f));
 }
+
+mat4 perspective(float fovy, float aspect, float n, float f) {
+    return mat4(vec4((1.f / aspect) * (1.f / tan(fovy / 2)), 0.f, 0.f, 0.f),
+                vec4(0.f, (1.f / tan(fovy / 2)), 0.f, 0.f),
+                vec4(0.f, 0.f, -(f + n) / (f - n), -2.f / (f - n)),
+                vec4(0.f, 0.f, -1.f, 0.f));
+}
