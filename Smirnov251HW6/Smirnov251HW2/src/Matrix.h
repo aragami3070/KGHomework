@@ -1,4 +1,5 @@
 #pragma once
+#include <math.h>
 class vec3;
 class vec4;
 
@@ -372,6 +373,24 @@ class mat3 {
         return mat3(*this) *= m;
     }
 };
+// ћатрица первого множител€ векторного произведени€
+mat3 crossM(vec3 p) {
+    return mat3(vec3(0.f, -p.z, p.y), vec3(p.z, 0.f, -p.x),
+                vec3(-p.y, p.x, 0.f));
+}
+
+vec3 cross(vec3 p, vec3 q){
+    return crossM(p) * q;
+}
+
+float length(vec3 p){
+    return sqrtf(dot(p, p));
+}
+
+// Ќормализаци€ вектора p
+vec3 norm(vec3 p){
+    return normalize(vec4(p, length(p)));
+}
 
 // MAT 2
 
