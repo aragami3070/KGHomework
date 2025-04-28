@@ -131,3 +131,17 @@ mat4 lookAt(vec3 S, vec3 P, vec3 u) {
     (*R) *= T;
     return (*R);
 }
+
+mat4 ortho(float l, float r, float b, float t, float zn, float zf) {
+    return mat4(vec4(2.f / (r - l), 0.f, 0.f, -(r + l) / (r - l)),
+                vec4(0.f, 2.f / (t - b), 0.f, -(t + b) / (t - b)),
+                vec4(0.f, 0.f, -2.f / (zf - zn), -(zf + zn) / (zf - zn)),
+                vec4(0.f, 0.f, 0.f, 1.f));
+}
+
+mat4 frustum(float l, float r, float b, float t, float n, float f) {
+    return mat4(vec4(2.f / (r - l), 0.f, (r + l) / (r - l), 0.f),
+                vec4(0.f, 2.f / (t - b), (t + b) / (t - b), 0.f),
+                vec4(0.f, 0.f, -(f + n) / (f - n), -2.f / (f - n)),
+                vec4(0.f, 0.f, -1.f, 0.f));
+}
