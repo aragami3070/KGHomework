@@ -152,3 +152,8 @@ mat4 perspective(float fovy, float aspect, float n, float f) {
                 vec4(0.f, 0.f, -(f + n) / (f - n), -2.f / (f - n)),
                 vec4(0.f, 0.f, -1.f, 0.f));
 }
+
+mat3 cadrRL(vec2 Vc, vec2 V, vec2 Wc, vec2 W) {
+    return translate(Wc.x, Wc.y) *
+           (scale(W.x / V.x, -W.y / V.y) * translate(-Vc.x, -Vc.y));
+}
