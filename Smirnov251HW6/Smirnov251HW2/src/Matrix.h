@@ -1,4 +1,6 @@
 #pragma once
+class vec3;
+class vec4;
 
 // VEC 2
 
@@ -10,6 +12,8 @@ class vec2 {
     }
     vec2(float a, float b) : x(a), y(b) {
     }
+
+    vec2(vec3 v);
 
     ~vec2() {
     }
@@ -59,7 +63,32 @@ class vec3 {
     }
     vec3(vec2 v, float c) : vec3(v.x, v.y, c) {
     }
+
+    vec3(vec4 v);
     ~vec3() {
+    }
+
+    vec3 &operator+=(const vec3 &v) {
+        x += v.x;
+        y += v.y;
+        z += v.z;
+        return *this;
+    }
+    const vec3 operator+(const vec3 &v) {
+        // Делаем временную копию текущего объекта, которую прибавляем к данному
+        // вектору, и возвращаем ее как результат
+        return vec3(*this) += v;
+    }
+    vec3 &operator-=(const vec3 &v) {
+        x -= v.x;
+        y -= v.y;
+        z -= v.z;
+        return *this;
+    }
+    const vec3 operator-(const vec3 &v) {
+        // Делаем временную копию текущего объекта, которую вычиатем из данного
+        // вектору, и возвращаем ее как результат
+        return vec3(*this) -= v;
     }
 
     // Умножение векторов *=
@@ -70,6 +99,16 @@ class vec3 {
         y *= v.y;
         z *= v.z;
         return *this;
+    }
+
+    vec3 &operator*=(const float &n) {
+        (*this) *= vec3(n, n, n); // Создаем вектор из трех копий числа и
+                                  // домножаем на него исходный вектор
+        return *this;
+    }
+
+    const vec3 operator*(const float& n) {
+        return vec3(*this) *= n;
     }
 
     // Умножение векторов *
@@ -152,8 +191,13 @@ float dot(vec4 v1, vec4 v2) {
 }
 
 vec3 normalize(vec4 v) {
-	// делим первые три координаты на значение четвертой
+    // делим первые три координаты на значение четвертой
     return vec3(v.x / v.a, v.y / v.a, v.z / v.a);
+}
+
+vec2::vec2(vec3 v) : x(v.x), y(v.y) {
+}
+vec3::vec3(vec4 v) : x(v.x), y(v.y), z(v.z) {
 }
 
 // MAT 4
@@ -244,11 +288,11 @@ class mat3 {
         row3 = vec3(0.f, 0.f, a);
     }
 
-	mat3(mat4 m) {
-		row1 = vec3(m.row1.x, m.row1.y, m.row1.z);
-		row2 = vec3(m.row2.x, m.row2.y, m.row2.z);
-		row3 = vec3(m.row3.x, m.row3.y, m.row3.z);
-	}
+    mat3(mat4 m) {
+        row1 = vec3(m.row1.x, m.row1.y, m.row1.z);
+        row2 = vec3(m.row2.x, m.row2.y, m.row2.z);
+        row3 = vec3(m.row3.x, m.row3.y, m.row3.z);
+    }
 
     ~mat3() {
     }
