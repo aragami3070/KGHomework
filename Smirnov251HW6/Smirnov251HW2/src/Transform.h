@@ -1,6 +1,7 @@
 #pragma once
 #include "Matrix.h"
 #include <cmath>
+#include <cstdlib>
 #include <math.h>
 
 // Преобразование переноса
@@ -106,4 +107,27 @@ mat4 rotate(float theta, vec3 n) {
 mat4 rotateP(float theta, vec3 n, vec3 P) {
     return translate(P.x, P.y, P.z) *
            (rotate(theta, n) * translate(-P.x, -P.y, -P.z));
+}
+
+mat4 lookAt(vec3 S, vec3 P, vec3 u) {
+    mat4 T = mat4(vec4(1.f, 0.f, 0.f, -S.x), vec4(0.f, 1.f, 0.f, -S.y),
+                  vec4(0.f, 0.f, 1.f, -S.z), vec4(0.f, 0.f, 0.f, 1.f));
+
+    vec3 e3 = (S - P);
+    float temp = sqrt(e3.x * e3.x + e3.y * e3.y + e3.z * e3.z);
+    e3 *= (1 / temp);
+
+    vec3 e1 = (cross(u, e3));
+    temp = sqrt(e1.x * e1.x + e1.y * e1.y + e1.z * e1.z);
+    e1 *= (1 / temp);
+
+    vec3 e2 = (cross(e3, e1));
+    temp = sqrt(e2.x * e2.x + e2.y * e2.y + e2.z * e2.z);
+    e2 *= (1 / temp);
+
+    mat4 *R = new mat4(vec4(e1, 0), vec4(e2, 0), vec4(e3, 0),
+                       vec4(0.f, 0.f, 0.f, 1.f));
+
+    (*R) *= T;
+    return (*R);
 }
