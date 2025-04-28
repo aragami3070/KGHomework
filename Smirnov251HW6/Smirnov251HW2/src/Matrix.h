@@ -107,7 +107,7 @@ class vec3 {
         return *this;
     }
 
-    const vec3 operator*(const float& n) {
+    const vec3 operator*(const float &n) {
         return vec3(*this) *= n;
     }
 
@@ -252,7 +252,7 @@ class mat4 {
     }
 
     // Произведение матриц *=
-    mat4 &operator*=(const mat4 &m) {
+    const mat4 &operator*=(const mat4 &m) {
         // Создаем копии исходных матриц
         mat4 A(*this), B(m);
         // Транспонируем вторую
@@ -302,6 +302,31 @@ class mat3 {
         // Массив значений типа vec3
         return ((vec3 *)this)[i];
     }
+    // Сложение матриц +=
+    mat3 &operator+=(const mat3 &m) {
+        // Создаем копию прибавляемой матрицы
+        mat3 B(m);
+        for (int i = 0; i < 3; i++) {
+            (*this)[i] += B[i];
+        }
+        return (*this);
+    }
+    // Сложение матриц +=
+    mat3 &operator+(const mat3 &m) {
+        return mat3(*this) += m;
+    }
+
+    mat3 &operator*=(const float &n) {
+        // Создаем копию прибавляемой матрицы
+        for (int i = 0; i < 3; i++) {
+            (*this)[i] *= n;
+        }
+        return (*this);
+    }
+
+    mat3 &operator*(const float &n) {
+        return mat3(*this) *= n;
+    }
 
     // Транспонирование
     mat3 transpose() {
@@ -328,7 +353,7 @@ class mat3 {
     }
 
     // Произведение матриц *=
-    mat3 &operator*=(const mat3 &m) {
+    const mat3 &operator*=(const mat3 &m) {
         // Создаем копии исходных матриц
         mat3 A(*this), B(m);
         // Транспонируем вторую
@@ -404,7 +429,7 @@ class mat2 {
     }
 
     // Произведение матриц *=
-    mat2 &operator*=(const mat2 &m) {
+    const mat2 &operator*=(const mat2 &m) {
         // Создаем копии исходных матриц
         mat2 A(*this), B(m);
         // Транспонируем вторую
