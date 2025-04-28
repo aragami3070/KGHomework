@@ -1,5 +1,6 @@
 #pragma once
 #include "Matrix.h"
+#include <cmath>
 #include <math.h>
 
 // Преобразование переноса
@@ -81,4 +82,28 @@ mat4 scale(float Sx, float Sy, float Sz) {
     (*res)[1][1] = Sy;
     (*res)[2][2] = Sz;
     return *res;
+}
+
+// Преобразование Родригеса
+mat4 rotate(float theta, vec3 n) {
+    // Создали единичную матрицу
+    mat3 *e = new mat3(1.f);
+
+    (*e) += (mat3(vec3(0.f, -n.z, n.y), vec3(n.z, 0.f, -n.x),
+                  vec3(-n.y, n.x, 0.f)) *
+             sin(theta));
+
+    (*e) += (mat3(vec3(-(n.z * n.z) - (n.y * n.y), n.x * n.y, n.x * n.z),
+                  vec3(n.y * n.x, -(n.x * n.x) - (n.z * n.z), n.y * n.z),
+                  vec3(n.z * n.x, n.z * n.y, -(n.x * n.x) - (n.y * n.y))) *
+             (1 - cos(theta)));
+
+    mat4 *res = new mat4(vec4(e->row1, 0.f), vec4(e->row2, 0.f),
+                         vec4(e->row3, 0.f), vec4(0.f, 0.f, 0.f, 1.f));
+    return (*res);
+}
+
+mat4 rotateP(float theta, vec3 n, vec3 P) {
+    return translate(P.x, P.y, P.z) *
+           (rotate(theta, n) * translate(-P.x, -P.y, -P.z));
 }
