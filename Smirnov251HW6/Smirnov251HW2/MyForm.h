@@ -281,7 +281,8 @@ ref class MyForm : public System::Windows::Forms::Form {
             break;
         case Keys::W:
             if (Control::ModifierKeys == Keys::Shift) {
-                T = lookAt(vec3(0, 0, -0.1), vec3(0, 0, -1.1), vec3(0, 1, 0)) * T;
+                T = lookAt(vec3(0, 0, -0.1), vec3(0, 0, -1.1), vec3(0, 1, 0)) *
+                    T;
             }
             else {
                 T = lookAt(vec3(0, 0, -1), vec3(0, 0, -2), vec3(0, 1, 0)) * T;
@@ -289,7 +290,8 @@ ref class MyForm : public System::Windows::Forms::Form {
             break;
         case Keys::S:
             if (Control::ModifierKeys == Keys::Shift) {
-                T = lookAt(vec3(0, 0, 0.1), vec3(0, 0, -0.9), vec3(0, 1, 0)) * T;
+                T = lookAt(vec3(0, 0, 0.1), vec3(0, 0, -0.9), vec3(0, 1, 0)) *
+                    T;
             }
             else {
                 T = lookAt(vec3(0, 0, 1), vec3(0, 0, 0), vec3(0, 1, 0)) * T;
@@ -297,7 +299,8 @@ ref class MyForm : public System::Windows::Forms::Form {
             break;
         case Keys::A:
             if (Control::ModifierKeys == Keys::Shift) {
-                T = lookAt(vec3(-0.1, 0, 0), vec3(-0.1, 0, -1), vec3(0, 1, 0)) * T;
+                T = lookAt(vec3(-0.1, 0, 0), vec3(-0.1, 0, -1), vec3(0, 1, 0)) *
+                    T;
             }
             else {
                 T = lookAt(vec3(-1, 0, 0), vec3(-1, 0, -1), vec3(0, 1, 0)) * T;
@@ -305,7 +308,8 @@ ref class MyForm : public System::Windows::Forms::Form {
             break;
         case Keys::D:
             if (Control::ModifierKeys == Keys::Shift) {
-                T = lookAt(vec3(0.1, 0, 0), vec3(0.1, 0, -1), vec3(0, 1, 0)) * T;
+                T = lookAt(vec3(0.1, 0, 0), vec3(0.1, 0, -1), vec3(0, 1, 0)) *
+                    T;
             }
             else {
                 T = lookAt(vec3(1, 0, 0), vec3(1, 0, -1), vec3(0, 1, 0)) * T;
@@ -313,6 +317,11 @@ ref class MyForm : public System::Windows::Forms::Form {
             break;
         case Keys::R: {
             vec3 u_new = mat3(rotate(0.1, vec3(0, 0, 1))) * vec3(0, 1, 0);
+            T = lookAt(vec3(0, 0, 0), vec3(0, 0, -1), u_new) * T;
+            break;
+        }
+        case Keys::Y: {
+            vec3 u_new = mat3(rotate(-0.1, vec3(0, 0, 1))) * vec3(0, 1, 0);
             T = lookAt(vec3(0, 0, 0), vec3(0, 0, -1), u_new) * T;
             break;
         }
@@ -340,6 +349,78 @@ ref class MyForm : public System::Windows::Forms::Form {
             }
             break;
         }
+        case Keys::G: {
+            if (Control::ModifierKeys == Keys::Shift) {
+                // матрица вращения, относительно точки P
+                mat4 M = rotateP(-0.1, vec3(1, 0, 0), vec3(0, 0, -dist));
+                // вращение направления вверх
+                vec3 u_new = mat3(M) * vec3(0, 1, 0);
+                vec3 S_new = normalize(
+                    M * vec4(0, 0, 0, 1)); // вращение начала координат
+                // переход к СКН в которой начало координат в новой точке, а
+                // направление
+                // наблюдения - в точку P
+                T = lookAt(S_new, vec3(0, 0, -dist), u_new) * T;
+            }
+            else {
+                // матрица вращения относительно Ox
+                mat4 M = rotate(-0.1, vec3(1, 0, 0));
+                // вращение направления вверх
+                vec3 u_new = mat3(M) * vec3(0, 1, 0);
+                // вращение точки, в которую смотрит , наблюдатель
+                vec3 P_new = normalize(M * vec4(0, 0, -1, 1));
+                T = lookAt(vec3(0, 0, 0), P_new, u_new) * T;
+            }
+            break;
+        }
+        case Keys::F: {
+            if (Control::ModifierKeys == Keys::Shift) {
+                // матрица вращения, относительно точки P
+                mat4 M = rotateP(0.1, vec3(0, 1, 0), vec3(0, 0, -dist));
+                // вращение направления вверх
+                vec3 u_new = mat3(M) * vec3(0, 1, 0);
+                vec3 S_new = normalize(
+                    M * vec4(0, 0, 0, 1)); // вращение начала координат
+                // переход к СКН в которой начало координат в новой точке, а
+                // направление
+                // наблюдения - в точку P
+                T = lookAt(S_new, vec3(0, 0, -dist), u_new) * T;
+            }
+            else {
+                // матрица вращения относительно Ox
+                mat4 M = rotate(0.1, vec3(0, 1, 0));
+                // вращение направления вверх
+                vec3 u_new = mat3(M) * vec3(0, 1, 0);
+                // вращение точки, в которую смотрит , наблюдатель
+                vec3 P_new = normalize(M * vec4(0, 0, -1, 1));
+                T = lookAt(vec3(0, 0, 0), P_new, u_new) * T;
+            }
+            break;
+        }
+        case Keys::H: {
+            if (Control::ModifierKeys == Keys::Shift) {
+                // матрица вращения, относительно точки P
+                mat4 M = rotateP(-0.1, vec3(0, 1, 0), vec3(0, 0, -dist));
+                // вращение направления вверх
+                vec3 u_new = mat3(M) * vec3(0, 1, 0);
+                vec3 S_new = normalize(
+                    M * vec4(0, 0, 0, 1)); // вращение начала координат
+                // переход к СКН в которой начало координат в новой точке, а
+                // направление
+                // наблюдения - в точку P
+                T = lookAt(S_new, vec3(0, 0, -dist), u_new) * T;
+            }
+            else {
+                // матрица вращения относительно Ox
+                mat4 M = rotate(-0.1, vec3(0, 1, 0));
+                // вращение направления вверх
+                vec3 u_new = mat3(M) * vec3(0, 1, 0);
+                // вращение точки, в которую смотрит , наблюдатель
+                vec3 P_new = normalize(M * vec4(0, 0, -1, 1));
+                T = lookAt(vec3(0, 0, 0), P_new, u_new) * T;
+            }
+            break;
+        }
         case Keys::I:
             if (Control::ModifierKeys == Keys::Shift) {
                 t -= 1;
@@ -350,10 +431,26 @@ ref class MyForm : public System::Windows::Forms::Form {
             break;
         case Keys::J:
             if (Control::ModifierKeys == Keys::Shift) {
-                l -= 1;
+                l += 1;
             }
             else {
-                l += 1;
+                l -= 1;
+            }
+            break;
+        case Keys::K:
+            if (Control::ModifierKeys == Keys::Shift) {
+                b -= 1;
+            }
+            else {
+                b += 1;
+            }
+            break;
+        case Keys::L:
+            if (Control::ModifierKeys == Keys::Shift) {
+                r += 1;
+            }
+            else {
+                r -= 1;
             }
             break;
         default:
