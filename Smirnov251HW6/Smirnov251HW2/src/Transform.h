@@ -87,21 +87,16 @@ mat4 scale(float Sx, float Sy, float Sz) {
 
 // Преобразование Родригеса
 mat4 rotate(float theta, vec3 n) {
-    // Создали единичную матрицу
-    mat3 *e = new mat3(1.f);
+    // Матрица вектора n
+    mat3 res = crossM(norm(n));
 
-    (*e) += (mat3(vec3(0.f, -n.z, n.y), vec3(n.z, 0.f, -n.x),
-                  vec3(-n.y, n.x, 0.f)) *
-             sin(theta));
+    // Подсчет формулы родригеса
+    res = (mat3)((mat3)(1.f) + (mat3)(res * sin(theta)) +
+                 (mat3)((mat3)(res * res) * (float)(1 - cos(theta))));
 
-    (*e) += (mat3(vec3(-(n.z * n.z) - (n.y * n.y), n.x * n.y, n.x * n.z),
-                  vec3(n.y * n.x, -(n.x * n.x) - (n.z * n.z), n.y * n.z),
-                  vec3(n.z * n.x, n.z * n.y, -(n.x * n.x) - (n.y * n.y))) *
-             (1 - cos(theta)));
-
-    mat4 *res = new mat4(vec4(e->row1, 0.f), vec4(e->row2, 0.f),
-                         vec4(e->row3, 0.f), vec4(0.f, 0.f, 0.f, 1.f));
-    return (*res);
+    // Приводим к mat4 добавляя толбец из 3 нулей и строку из трех 0 и одной 1
+    return mat4(vec4(res.row1, 0.f), vec4(res.row2, 0.f), vec4(res.row3, 0.f),
+                vec4(0.f, 0.f, 0.f, 1.f));
 }
 
 mat4 rotateP(float theta, vec3 n, vec3 P) {
@@ -110,26 +105,15 @@ mat4 rotateP(float theta, vec3 n, vec3 P) {
 }
 
 mat4 lookAt(vec3 S, vec3 P, vec3 u) {
-    mat4 T = mat4(vec4(1.f, 0.f, 0.f, -S.x), vec4(0.f, 1.f, 0.f, -S.y),
-                  vec4(0.f, 0.f, 1.f, -S.z), vec4(0.f, 0.f, 0.f, 1.f));
+    mat4 T = translate(-S.x, -S.y, -S.z);
+    
+    vec3 e3 = norm(S - P);
+    vec3 e1 = norm(cross(u, e3));
+    vec3 e2 = norm(cross(e3, e1));
 
-    vec3 e3 = (S - P);
-    float temp = sqrt(e3.x * e3.x + e3.y * e3.y + e3.z * e3.z);
-    e3 *= (1 / temp);
-
-    vec3 e1 = (cross(u, e3));
-    temp = sqrt(e1.x * e1.x + e1.y * e1.y + e1.z * e1.z);
-    e1 *= (1 / temp);
-
-    vec3 e2 = (cross(e3, e1));
-    temp = sqrt(e2.x * e2.x + e2.y * e2.y + e2.z * e2.z);
-    e2 *= (1 / temp);
-
-    mat4 *R = new mat4(vec4(e1, 0), vec4(e2, 0), vec4(e3, 0),
-                       vec4(0.f, 0.f, 0.f, 1.f));
-
-    (*R) *= T;
-    return (*R);
+    mat4 R = mat4(vec4(e1, 0.f), vec4(e2, 0.f), vec4(e3, 0.f),
+                  vec4(0.f, 0.f, 0.f, 1.f));
+    return R * T;
 }
 
 mat4 ortho(float l, float r, float b, float t, float zn, float zf) {
