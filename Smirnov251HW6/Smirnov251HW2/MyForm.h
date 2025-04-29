@@ -280,16 +280,36 @@ ref class MyForm : public System::Windows::Forms::Form {
             pType = Ortho;
             break;
         case Keys::W:
-            T = lookAt(vec3(0, 0, -1), vec3(0, 0, -2), vec3(0, 1, 0)) * T;
+            if (Control::ModifierKeys == Keys::Shift) {
+                T = lookAt(vec3(0, 0, -0.1), vec3(0, 0, -1.1), vec3(0, 1, 0)) * T;
+            }
+            else {
+                T = lookAt(vec3(0, 0, -1), vec3(0, 0, -2), vec3(0, 1, 0)) * T;
+            }
             break;
         case Keys::S:
-            T = lookAt(vec3(0, 0, 1), vec3(0, 0, 0), vec3(0, 1, 0)) * T;
+            if (Control::ModifierKeys == Keys::Shift) {
+                T = lookAt(vec3(0, 0, 0.1), vec3(0, 0, -0.9), vec3(0, 1, 0)) * T;
+            }
+            else {
+                T = lookAt(vec3(0, 0, 1), vec3(0, 0, 0), vec3(0, 1, 0)) * T;
+            }
             break;
         case Keys::A:
-            T = lookAt(vec3(-1, 0, 0), vec3(-1, 0, -1), vec3(0, 1, 0)) * T;
+            if (Control::ModifierKeys == Keys::Shift) {
+                T = lookAt(vec3(-0.1, 0, 0), vec3(-0.1, 0, -1), vec3(0, 1, 0)) * T;
+            }
+            else {
+                T = lookAt(vec3(-1, 0, 0), vec3(-1, 0, -1), vec3(0, 1, 0)) * T;
+            }
             break;
         case Keys::D:
-            T = lookAt(vec3(1, 0, 0), vec3(1, 0, -1), vec3(0, 1, 0)) * T;
+            if (Control::ModifierKeys == Keys::Shift) {
+                T = lookAt(vec3(0.1, 0, 0), vec3(0.1, 0, -1), vec3(0, 1, 0)) * T;
+            }
+            else {
+                T = lookAt(vec3(1, 0, 0), vec3(1, 0, -1), vec3(0, 1, 0)) * T;
+            }
             break;
         case Keys::R: {
             vec3 u_new = mat3(rotate(0.1, vec3(0, 0, 1))) * vec3(0, 1, 0);
