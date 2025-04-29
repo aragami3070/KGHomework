@@ -453,6 +453,46 @@ ref class MyForm : public System::Windows::Forms::Form {
                 r -= 1;
             }
             break;
+        case Keys::U:
+            if (Control::ModifierKeys == Keys::Shift) {
+                n = min(f - 0.1, n + 0.2);
+            }
+            else {
+                n = max(0.1, n - 0.2);
+            }
+            break;
+        case Keys::O:
+            if (Control::ModifierKeys == Keys::Shift) {
+                f += 0.2;
+            }
+            else {
+                f = max(n + 0.1, f - 0.2);
+            }
+            break;
+        case Keys::B:
+            if (Control::ModifierKeys == Keys::Shift) {
+                dist += 0.2;
+            }
+            else {
+                dist = max(dist - 0.2, 0.1);
+            }
+            break;
+        case Keys::Z:
+            if (Control::ModifierKeys == Keys::Shift) {
+                fovy_work = min(fovy_work + 0.2, 3.);
+            }
+            else {
+                fovy_work = max(fovy_work - 0.2, 0.3);
+            }
+            break;
+        case Keys::X:
+            if (Control::ModifierKeys == Keys::Shift) {
+                aspect_work += 0.05;
+            }
+            else {
+                aspect_work = max(aspect_work - 0.05, 0.01);
+            }
+            break;
         default:
             break;
         }
