@@ -455,10 +455,10 @@ ref class MyForm : public System::Windows::Forms::Form {
             break;
         case Keys::U:
             if (Control::ModifierKeys == Keys::Shift) {
-                n = min(f - 0.1, n + 0.2);
+                n = std::min(f - 0.1, n + 0.2);
             }
             else {
-                n = max(0.1, n - 0.2);
+                n = std::max(0.1, n - 0.2);
             }
             break;
         case Keys::O:
@@ -466,7 +466,7 @@ ref class MyForm : public System::Windows::Forms::Form {
                 f += 0.2;
             }
             else {
-                f = max(n + 0.1, f - 0.2);
+                f = std::max(n + 0.1, f - 0.2);
             }
             break;
         case Keys::B:
@@ -474,15 +474,15 @@ ref class MyForm : public System::Windows::Forms::Form {
                 dist += 0.2;
             }
             else {
-                dist = max(dist - 0.2, 0.1);
+                dist = std::max(dist - 0.2, 0.1);
             }
             break;
         case Keys::Z:
             if (Control::ModifierKeys == Keys::Shift) {
-                fovy_work = min(fovy_work + 0.2, 3.);
+                fovy_work = std::min(fovy_work + 0.2, 3.);
             }
             else {
-                fovy_work = max(fovy_work - 0.2, 0.3);
+                fovy_work = std::max(fovy_work - 0.2, 0.3);
             }
             break;
         case Keys::X:
@@ -490,7 +490,7 @@ ref class MyForm : public System::Windows::Forms::Form {
                 aspect_work += 0.05;
             }
             else {
-                aspect_work = max(aspect_work - 0.05, 0.01);
+                aspect_work = std::max(aspect_work - 0.05, 0.01);
             }
             break;
         default:
