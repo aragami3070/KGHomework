@@ -49,5 +49,29 @@
     <Text Include="task.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
+    <Text Include="bunny.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="car.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="cube.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="engine.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="Geometric3D.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="Geometric3D-1.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="Geometric3D-2.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="pyramide.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
   </ItemGroup>
 </Project>

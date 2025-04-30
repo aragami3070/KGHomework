@@ -138,9 +138,17 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="bunny.txt" />
+    <Text Include="car.txt" />
+    <Text Include="cube.txt" />
     <Text Include="Ejik.txt" />
+    <Text Include="engine.txt" />
     <Text Include="Geometic.txt" />
+    <Text Include="Geometric3D-1.txt" />
+    <Text Include="Geometric3D-2.txt" />
+    <Text Include="Geometric3D.txt" />
     <Text Include="Hare_full.txt" />
+    <Text Include="pyramide.txt" />
     <Text Include="task.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
