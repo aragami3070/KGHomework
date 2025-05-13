@@ -3,11 +3,10 @@
 #include <GLFW\glfw3.h>
 #include <glm\glm.hpp>
 #include <glm\gtx\transform.hpp>
-#include <glm\gtc\type_ptr.hpp>
-#include <iostream>
+#include <glm\gtc\type_ptr.hpp>
 
 int main() {
-	std::cout << "Test" << std::endl;
-    
-	return 0;
+    glfwInit();      // Инициализация GLFW
+    glfwTerminate(); // завершить работу GLFW
+    return 0;
 }
