@@ -8,12 +8,176 @@
 #include <glm\gtc\type_ptr.hpp>
 #include <glm\gtx\transform.hpp>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
+//=============================================================================
+// ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+//=============================================================================
+std::vector<model> models;
+glm::mat4 T;       // матрица, в которой накапливаются все преобразования
+glm::vec3 S, P, u; // координаты точки наблюдения
+// точки, в которую направлен вектор наблюдения
+// вектора направления вверх
+float dist;         // вспомогательная переменная - расстояние между S и P
+float fovy, aspect; // угол обзора и соотношение сторон окна наблюдения
+float fovy_work, aspect_work; // рабочие переменные для fovy и aspect
+float near_view, far_view;    // расстояния до окна наблюдения и до горизонта
+float n, f;                   // рабочие переменные для near_view и far_view
+float l, r, t, b;             // рабочие вспомогательные переменные
+// для значений координат левой, правой,
+// нижней и верхней координаты в СКН
+enum projType { Ortho, Frustum, Perspective } pType; // тип трехмерной проекции
+//=============================================================================
+void initWorkPars() { // инициализация рабочих параметров камеры
+    n = near_view;
+    f = far_view;
+    fovy_work = fovy;
+    aspect_work = aspect;
+    float Vy = 2 * near_view * glm::tan(fovy / 2);
+    float Vx = aspect * Vy;
+    l = -Vx / 2;
+    r = -l;
+    b = -Vy / 2;
+    t = -b;
+    dist = glm::length(P - S);
+    T = glm::lookAt(S, P, u);
+}
+void readFromFile(const char *fileName) { // чтение сцены из файла fileName
+    // объявление и открытие файла
+    // объявление и открытие файла
+    std::ifstream in;
+    in.open(fileName);
+    if (in.is_open()) {
+        // файл успешно открыт
+        models.clear(); // очищаем имеющийся список рисунков
+        // временные переменные для чтения из файла
+        glm::mat4 M = glm::mat4(1.f); // матрица для получения модельной матрицы
+        glm::mat4
+            initM; // матрица для начального преобразования каждого рисунка
+        std::vector<glm::mat4> transforms; // стек матриц преобразований
+        std::vector<path> figure;          // список ломаных очередного рисунка
+        float thickness = 2; // толщина со значением по умолчанию 2
+        float r, g, b;       // составляющие цвета
+        r = g = b = 0;   // значение составляющих цвета по умолчанию (черный)
+        std::string cmd; // строка для считывания имени команды
+        // непосредственно работа с файлом
+        std::string str;       // строка, в которую считываем строки файла
+        std::getline(in, str); // считываем из входного файла первую строку
+        while (in) {           // если очередная строка считана успешно
+            // обрабатываем строку
+            if ((str.find_first_not_of(" \t\r\n") != std::string::npos) &&
+                (str[0] != '#')) {
+                // прочитанная строка не пуста и не комментарий
+                std::stringstream s(str); // строковый поток из строки str
+                s >> cmd;
+                if (cmd == "camera") { // положение камеры
+                    float x, y, z;
+                    s >> x >> y >> z; // координаты точки наблюдения
+                    S = glm::vec3(x, y, z);
+                    s >> x >> y >>
+                        z; // точка, в которую направлен вектор наблюдения
+                    P = glm::vec3(x, y, z);
+                    s >> x >> y >> z; // вектор направления вверх
+                    u = glm::vec3(x, y, z);
+                }
+                else if (cmd == "screen") { // положение окна наблюдения
+                    s >> fovy_work >> aspect >> near_view >>
+                        far_view; // параметры команды
+                    fovy = glm::radians(
+                        fovy_work); // перевод угла из градусов в радианты
+                }
+                else if (cmd == "color") { // цвет линии
+                    s >> r >> g >> b;      // считываем три составляющие цвета
+                }
+                else if (cmd == "thickness") { // толщина линии
+                    s >> thickness;            // считываем значение толщины
+                }
+                else if (cmd == "path") {            // набор точек
+                    std::vector<glm::vec3> vertices; // список точек ломаной
+                    int N;                           // количество точек
+                    s >> N;
+                    std::string
+                        str1;       // дополнительная строка для чтения из файла
+                    while (N > 0) { // пока не все точки считали
+                        std::getline(in, str1); // считываем в str1 из входного
+                                                // файла очередную строку
+                        // так как файл корректный, то на конец файла проверять
+                        // не нужно
+                        if ((str1.find_first_not_of(" \t\r\n") !=
+                             std::string::npos) &&
+                            (str1[0] != '#')) {
+                            // прочитанная строка не пуста и не комментарий
+                            // значит в ней пара координат
+                            float x, y, z; // переменные для считывания
+                            std::stringstream s1(str1); // еще один строковый
+                                                        // поток из строки str1
+                            s1 >> x >> y >> z;
+                            vertices.push_back(
+                                glm::vec3(x, y, z)); // добавляем точку в список
+                            N--; // уменьшаем счетчик после успешного считывания
+                                 // точки
+                        }
+                    }
+                    // все точки считаны, генерируем ломаную (path) и кладем ее
+                    // в список figure
+                    figure.push_back(
+                        path(vertices, glm::vec3(r, g, b) / 255.f, thickness));
+                }
+                else if (cmd == "model") { // начало описания нового рисунка
+                    float mVcx, mVcy, mVcz, mVx, mVy,
+                        mVz; // параметры команды model
+                    s >> mVcx >> mVcy >> mVcz >> mVx >> mVy >>
+                        mVz; // считываем значения переменных
+                    float S = mVx / mVy < 1 ? 2.f / mVy : 2.f / mVx;
+                    // сдвиг точки привязки из начала координат в нужную позицию
+                    // после которого проводим масштабирование
+                    initM = glm::scale(glm::vec3(S)) *
+                            glm::translate(glm::vec3(-mVcx, -mVcy, -mVcz));
+                    figure.clear();
+                }
+                else if (cmd == "figure") { // формирование новой модели
+                    models.push_back(model(figure, M * initM));
+                }
+                else if (cmd == "translate") { // перенос
+                    float Tx, Ty, Tz;    // параметры преобразования переноса
+                    s >> Tx >> Ty >> Tz; // считываем параметры
+                    M = glm::translate(glm::vec3(Tx, Ty, Tz)) *
+                        M; // добавляем перенос к общему преобразованию
+                }
+                else if (cmd == "scale") { // масштабирование
+                    float S;               // параметр масштабирования
+                    s >> S;                // считываем параметр
+                    M = glm::scale(glm::vec3(S)) *
+                        M; // добавляем масштабирование к общему преобразованию
+                }
+                else if (cmd == "rotate") { // поворот
+                    float theta;            // угол поворота в градусах
+                    float nx, ny,
+                        nz; // координаты направляющего вектора оси вращения
+                    s >> theta >> nx >> ny >> nz; // считываем параметры
+                    // добавляем вращение к общему преобразованию
+                    M = glm::rotate(glm::radians(theta),
+                                    glm::vec3(nx, ny, nz)) *
+                        M;
+                }
+                else if (cmd == "pushTransform") { // сохранение матрицы в стек
+                    transforms.push_back(M);       // сохраняем матрицу в стек
+                }
+                else if (cmd == "popTransform") { // откат к матрице из стека
+                    M = transforms.back(); // получаем верхний элемент стека
+                    transforms.pop_back(); // выкидываем матрицу из стека
+                }
+            }
+            // считываем очередную строку
+            std::getline(in, str);
+        }
+        initWorkPars();
+    }
+}
 // обработчик события Resize
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -52,6 +216,10 @@ int main() {
         return -1;       // завершить программу
     }
     glfwMakeContextCurrent(window); // делаем окно window активным (текущим)
+    // Назначение обработчика события Resize
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    // Назначение обработчика нажатия клавиш
+    glfwSetKeyCallback(window, key_callback);
 
     // Инициализация GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -64,15 +232,6 @@ int main() {
     // (0, 0) - координаты левого нижнего угла, 800x600 - размеры окна в
     // пикселах
     glViewport(0, 0, 800, 600);
-    glfwMakeContextCurrent(window); // делаем окно window активным (текущим)
-    //
-    // Назначение обработчика события Resize
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    // Назначение обработчика нажатия клавиш
-    glfwSetKeyCallback(window, key_callback);
-
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // назначаем цвет заливки
-    glClear(GL_COLOR_BUFFER_BIT);         // очищаем буфер заданным цветом
 
     //=====================================================================
     // ВЕРШИННЫЙ ШЕЙДЕР
@@ -149,41 +308,43 @@ int main() {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    //==============================================
-    // НАБОР ИСХОДНЫХ ДАННЫХ ДЛЯ ОТРИСОВКИ
-    //==============================================
-    GLfloat vertices[] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f,
-                          0.0f,  0.0f,  0.5f, 0.0f};
-
-    GLuint vertexArray; // объект вершинного массива
-    // создаем вершинный массив, идентификатор которого присваиваем vertexArray
-    glGenVertexArrays(1, &vertexArray);
-    glBindVertexArray(vertexArray); // делаем активным вершинный массив
-
-    GLuint vertexBuffer; // идентификатор буферного объекта
-    // создаем буферный объект, идентификатор которого присваиваем vertexBuffer
-    glGenBuffers(1, &vertexBuffer);
-    // привязка vertexBuffer к GL_ARRAY_BUFFER
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    // в буфер, привязанный к GL_ARRAY_BUFFER копируем содержимое vertices
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // описание расположения параметра вершинного шейдера в вершинном буфере
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat),
-                          (GLvoid *)0);
-    glEnableVertexAttribArray(0);     // включение параметра 0 для шейдера
-    glBindBuffer(GL_ARRAY_BUFFER, 0); // отвязка буферного объекта
-    glBindVertexArray(0);             // отключение вершинного массива
-
-    // описание расположения параметра вершинного шейдера в вершинном буфере
-    // шейдерную программу shaderProgram делаем активной
-    glUseProgram(shaderProgram);
-    glBindVertexArray(vertexArray);    // делаем активным вершинный массив
-    glLineWidth(6);                    // устанавливаем толщину линии - 6
-    glDrawArrays(GL_LINE_STRIP, 0, 3); // отрисовка одного треугольника
-    glBindVertexArray(0);              // отключаем вершинный массив
-
+    readFromFile("Smirnov251HW7\\triangle.txt");
     // пока окно window не должно закрыться
     while (!glfwWindowShouldClose(window)) {
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // назначаем цвет заливки
+        glClear(GL_COLOR_BUFFER_BIT);         // очищаем буфер заданным цветом
+        // описание расположения параметра вершинного шейдера в вершинном буфере
+        // шейдерную программу shaderProgram делаем активной
+        glUseProgram(shaderProgram);
+        glm::mat4 proj; // матрица перехода в пространство отсечения
+        switch (pType) {
+        case Ortho: // прямоугольная проекция
+            proj = glm::ortho(l, r, b, t, n, f);
+            break;
+        case Frustum: // перспективная проекция с Frustum
+            proj = glm::frustum(l, r, b, t, n, f);
+            break;
+        case Perspective: // перспективная проекция с Perspective
+            proj = glm::perspective(fovy_work, aspect_work, n, f);
+            break;
+        }
+        // матрица перехода от мировых координат в пространство отсечения
+        glm::mat4 C = proj * T;
+        for (int k = 0; k < models.size(); k++) { // цикл по моделям
+            std::vector<path> figure =
+                models[k].figure; // список ломаных очередной модели
+            glm::mat4 TM =
+                C * models[k].modelM; // матрица общего преобразования модели
+            for (int i = 0; i < figure.size(); i++) {
+                glBindVertexArray(
+                    figure[i].vertexArray); // делаем активным вершинный массив
+                                            // i-й ломаной
+                glLineWidth(figure[i].thickness); // устанавливаем толщину линии
+                glDrawArrays(GL_LINE_STRIP, 0,
+                             figure[i].vertices.size()); // отрисовка ломаной
+                glBindVertexArray(0); // отключаем вершинный массив
+            }
+        }
         glfwSwapBuffers(window); // поменять местами буферы изображения
         glfwPollEvents();        // проверить, произошли ли какие-то события
     }
