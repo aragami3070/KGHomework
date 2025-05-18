@@ -1,12 +1,79 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glad\glad.h>
+
 #include <GLFW\glfw3.h>
 #include <glm\glm.hpp>
+#include <glm\gtc\type_ptr.hpp>
 #include <glm\gtx\transform.hpp>
-#include <glm\gtc\type_ptr.hpp>
+#include <iostream>
+
+// обработчик события Resize
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+    glViewport(0, 0, width, height);
+}
+// Обработчик нажатия клавиш
+void key_callback(GLFWwindow *window, int key, int scancode, int action,
+                  int mode) {
+    if (action != GLFW_RELEASE) { // если клавиша нажата
+        switch (key) {            // анализируем обрабатываемую клавишу
+        case GLFW_KEY_ESCAPE:     // если клавиша - Escape
+            // устанавливаем, что окно window должно быть закрыто
+            glfwSetWindowShouldClose(window, GL_TRUE);
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+
 
 int main() {
-    glfwInit();      // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ GLFW
-    glfwTerminate(); // Р·Р°РІРµСЂС€РёС‚СЊ СЂР°Р±РѕС‚Сѓ GLFW
+    setlocale(LC_ALL, "rus");
+    glfwInit(); // Инициализация GLFW
+    // Задается минимальная требуемая версия OpenGL.
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // Номер до десятичной точки
+    // Номер после десятичной точки
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    // Используем только средства указанной версии без совместимости с более
+    // ранними
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // Создаем окно
+    GLFWwindow *window =
+        glfwCreateWindow(800, 600, "Task 7. Smirnov 251", NULL, NULL);
+    if (window == NULL) { // если ссылка на окно не создана
+        std::cout << "Вызов glfwCreateWindow закончился неудачей." << std::endl;
+        glfwTerminate(); // завершить работу GLFW
+        return -1;       // завершить программу
+    }
+    glfwMakeContextCurrent(window); // делаем окно window активным (текущим)
+
+    // Инициализация GLAD
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cout << "Не удалось загрузить GLAD" << std::endl;
+        glfwTerminate(); // завершить работу GLFW
+        return -1;       // завершить программу
+    }
+
+    // сообщаем диапазон координат в окне
+    // (0, 0) - координаты левого нижнего угла, 800x600 - размеры окна в
+    // пикселах
+    glViewport(0, 0, 800, 600);
+    glfwMakeContextCurrent(window); // делаем окно window активным (текущим)
+    //
+    // Назначение обработчика события Resize
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    // Назначение обработчика нажатия клавиш
+    glfwSetKeyCallback(window, key_callback);
+
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // назначаем цвет заливки
+    glClear(GL_COLOR_BUFFER_BIT);         // очищаем буфер заданным цветом
+
+    // пока окно window не должно закрыться
+    while (!glfwWindowShouldClose(window)) {
+        glfwSwapBuffers(window); // поменять местами буферы изображения
+        glfwPollEvents();        // проверить, произошли ли какие-то события
+    }
+    glfwTerminate(); // завершить работу GLFW
     return 0;
 }

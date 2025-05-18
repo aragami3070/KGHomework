@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\External Resources\GLAD\src\glad.c">
+    <ClCompile Include="Smirnov251HW7\Main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Smirnov251HW7\Main.cpp">
+    <ClCompile Include="..\External Resources\GLAD\src\glad.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
