@@ -1,11 +1,18 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glad\glad.h>
 
+#include "Figure.h"
+
 #include <GLFW\glfw3.h>
 #include <glm\glm.hpp>
 #include <glm\gtc\type_ptr.hpp>
 #include <glm\gtx\transform.hpp>
+
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 // обработчик события Resize
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
