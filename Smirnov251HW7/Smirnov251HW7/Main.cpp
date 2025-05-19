@@ -230,6 +230,21 @@ void cursorPosSave_callback(GLFWwindow *window, double xpos, double ypos) {
     lastY = ypos;
 }
 
+// обработчик панелей прокрутки
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
+    dist += yoffset;
+}
+// обработчик нажатия кнопки мыши
+void mouse_button_callback(GLFWwindow *window, int button, int action,
+                           int mods) {
+    if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT) {
+        mouseBtnPressed = true;
+    }
+    else if (action == GLFW_RELEASE && button == GLFW_MOUSE_BUTTON_LEFT) {
+        mouseBtnPressed = false;
+    }
+}
+
 // Обработчик нажатия клавиш
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mode) {
@@ -239,23 +254,63 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
             initWorkPars();
             break;
         case GLFW_KEY_W:
-            T = glm::lookAt(glm::vec3(0, 0, -1), glm::vec3(0, 0, -2),
-                            glm::vec3(0, 1, 0)) *
-                T;
+            if (mode == GLFW_MOD_SHIFT) {
+                T = glm::lookAt(glm::vec3(0, 0, -0.1), glm::vec3(0, 0, -1.1),
+                                glm::vec3(0, 1, 0)) *
+                    T;
+            }
+            else {
+                T = glm::lookAt(glm::vec3(0, 0, -1), glm::vec3(0, 0, -2),
+                                glm::vec3(0, 1, 0)) *
+                    T;
+            }
             break;
         case GLFW_KEY_S:
-            T = glm::lookAt(glm::vec3(0, 0, 1), glm::vec3(0, 0, 0),
-                            glm::vec3(0, 1, 0)) *
-                T;
+            if (mode == GLFW_MOD_SHIFT) {
+                T = glm::lookAt(glm::vec3(0, 0, 0.1), glm::vec3(0, 0, -0.9),
+                                glm::vec3(0, 1, 0)) *
+                    T;
+            }
+            else {
+                T = glm::lookAt(glm::vec3(0, 0, 1), glm::vec3(0, 0, 0),
+                                glm::vec3(0, 1, 0)) *
+                    T;
+            }
             break;
         case GLFW_KEY_A:
-            T = glm::lookAt(glm::vec3(-1, 0, 0), glm::vec3(-1, 0, -1),
-                            glm::vec3(0, 1, 0)) *
-                T;
+            if (mode == GLFW_MOD_SHIFT) {
+                T = glm::lookAt(glm::vec3(-0.1, 0, 0), glm::vec3(-0.1, 0, -1),
+                                glm::vec3(0, 1, 0)) *
+                    T;
+            }
+            else {
+                T = glm::lookAt(glm::vec3(-1, 0, 0), glm::vec3(-1, 0, -1),
+                                glm::vec3(0, 1, 0)) *
+                    T;
+            }
+            break;
+        case GLFW_KEY_D:
+            if (mode == GLFW_MOD_SHIFT) {
+                T = glm::lookAt(glm::vec3(0.1, 0, 0), glm::vec3(0.1, 0, -1),
+                                glm::vec3(0, 1, 0)) *
+                    T;
+            }
+            else {
+                T = glm::lookAt(glm::vec3(1, 0, 0), glm::vec3(1, 0, -1),
+                                glm::vec3(0, 1, 0)) *
+                    T;
+            }
             break;
         case GLFW_KEY_R: {
             glm::vec3 u_new = glm::mat3(glm::rotate(0.1f, glm::vec3(0, 0, 1))) *
                               glm::vec3(0, 1, 0);
+            T = glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1), u_new) * T;
+            break;
+        }
+        case GLFW_KEY_Y: {
+            glm::vec3 u_new =
+                glm::mat3(glm::rotate(-0.1f, glm::vec3(0, 0, 1))) *
+                glm::vec3(0, 1, 0);
             T = glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1), u_new) * T;
             break;
         }
@@ -286,6 +341,87 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
             }
             break;
         }
+        case GLFW_KEY_G: {
+            if (mode == GLFW_MOD_SHIFT) {
+                // матрица вращения относительно точки P
+                glm::mat4 M =
+                    rotateP(-0.1, glm::vec3(1, 0, 0), glm::vec3(0, 0, -dist));
+                glm::vec3 u_new =
+                    glm::mat3(M) *
+                    glm::vec3(0, 1, 0); // вращение направления вверх
+                glm::vec3 S_new = glm::vec3(
+                    M * glm::vec4(0, 0, 0, 1)); // вращение начала координат
+                // переход к СКН в которой начало координат в новой точке, а
+                // направление наблюдения - в точку P
+                T = glm::lookAt(S_new, glm::vec3(0, 0, -dist), u_new) * T;
+            }
+            else {
+                glm::mat4 M = glm::rotate(
+                    -0.1f,
+                    glm::vec3(1, 0, 0)); // матрица вращения относительно Ox
+                glm::vec3 u_new =
+                    glm::mat3(M) *
+                    glm::vec3(0, 1, 0); // вращение направления вверх
+                // вращение точки, в которую смотрит наблюдатель
+                glm::vec3 P_new = glm::vec3(M * glm::vec4(0, 0, -1, 1));
+                T = glm::lookAt(glm::vec3(0, 0, 0), P_new, u_new) * T;
+            }
+            break;
+        }
+        case GLFW_KEY_F: {
+            if (mode == GLFW_MOD_SHIFT) {
+                // матрица вращения относительно точки P
+                glm::mat4 M =
+                    rotateP(-0.1, glm::vec3(0, 1, 0), glm::vec3(0, 0, -dist));
+                glm::vec3 u_new =
+                    glm::mat3(M) *
+                    glm::vec3(0, 1, 0); // вращение направления вверх
+                glm::vec3 S_new = glm::vec3(
+                    M * glm::vec4(0, 0, 0, 1)); // вращение начала координат
+                // переход к СКН в которой начало координат в новой точке, а
+                // направление наблюдения - в точку P
+                T = glm::lookAt(S_new, glm::vec3(0, 0, -dist), u_new) * T;
+            }
+            else {
+                glm::mat4 M = glm::rotate(
+                    -0.1f,
+                    glm::vec3(0, 1, 0)); // матрица вращения относительно Ox
+                glm::vec3 u_new =
+                    glm::mat3(M) *
+                    glm::vec3(0, 1, 0); // вращение направления вверх
+                // вращение точки, в которую смотрит наблюдатель
+                glm::vec3 P_new = glm::vec3(M * glm::vec4(0, 0, -1, 1));
+                T = glm::lookAt(glm::vec3(0, 0, 0), P_new, u_new) * T;
+            }
+            break;
+        }
+        case GLFW_KEY_H: {
+            if (mode == GLFW_MOD_SHIFT) {
+                // матрица вращения относительно точки P
+                glm::mat4 M =
+                    rotateP(0.1, glm::vec3(0, 1, 0), glm::vec3(0, 0, -dist));
+                glm::vec3 u_new =
+                    glm::mat3(M) *
+                    glm::vec3(0, 1, 0); // вращение направления вверх
+                glm::vec3 S_new = glm::vec3(
+                    M * glm::vec4(0, 0, 0, 1)); // вращение начала координат
+                // переход к СКН в которой начало координат в новой точке, а
+                // направление наблюдения - в точку P
+                T = glm::lookAt(S_new, glm::vec3(0, 0, -dist), u_new) * T;
+            }
+            else {
+                glm::mat4 M = glm::rotate(
+                    0.1f,
+                    glm::vec3(0, 1, 0)); // матрица вращения относительно Ox
+                glm::vec3 u_new =
+                    glm::mat3(M) *
+                    glm::vec3(0, 1, 0); // вращение направления вверх
+                // вращение точки, в которую смотрит наблюдатель
+                glm::vec3 P_new = glm::vec3(M * glm::vec4(0, 0, -1, 1));
+                T = glm::lookAt(glm::vec3(0, 0, 0), P_new, u_new) * T;
+            }
+            break;
+        }
         case GLFW_KEY_I:
             if (mode == GLFW_MOD_SHIFT) {
                 t -= 1;
@@ -302,8 +438,67 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
                 l -= 1;
             }
             break;
+        case GLFW_KEY_K:
+            if (mode == GLFW_MOD_SHIFT) {
+                b -= 1;
+            }
+            else {
+                b += 1;
+            }
+            break;
+        case GLFW_KEY_L:
+            if (mode == GLFW_MOD_SHIFT) {
+                r -= 1;
+            }
+            else {
+                r += 1;
+            }
+            break;
+        case GLFW_KEY_U:
+            if (mode == GLFW_MOD_SHIFT) {
+                n = std::min(f - 0.1, n + 0.2);
+            }
+            else {
+                n = std::max(0.1, n - 0.2);
+            }
+            break;
+        case GLFW_KEY_O:
+            if (mode == GLFW_MOD_SHIFT) {
+                f += 0.2;
+            }
+            else {
+                f = std::max(n + 0.1, f - 0.2);
+            }
+            break;
+        case GLFW_KEY_B:
+            if (mode == GLFW_MOD_SHIFT) {
+                dist += 0.2;
+            }
+            else {
+                dist = std::max(dist - 0.2, 0.1);
+            }
+            break;
+        case GLFW_KEY_Z:
+            if (mode == GLFW_MOD_SHIFT) {
+                fovy_work = std::min(fovy_work + 0.2, 3.);
+            }
+            else {
+                fovy_work = std::max(fovy_work - 0.2, 0.3);
+            }
+            break;
+        case GLFW_KEY_X:
+            if (mode == GLFW_MOD_SHIFT) {
+                aspect_work += 0.05;
+            }
+            else {
+                aspect_work = std::max(aspect_work - 0.05, 0.01);
+            }
+            break;
         case GLFW_KEY_1:
             pType = Ortho;
+            break;
+        case GLFW_KEY_2:
+            pType = Frustum;
             break;
         case GLFW_KEY_3:
             pType = Perspective;
@@ -338,11 +533,15 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
         }
         case GLFW_KEY_F5:
             if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
+                // включается курсор
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                // отключается обработчик положения курсора
                 glfwSetCursorPosCallback(window, cursorPosSave_callback);
             }
             else {
+                // отключается курсор
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                // включается обработчик положения курсора
                 glfwSetCursorPosCallback(window, cursorPos_callback);
             }
             break;
@@ -376,7 +575,9 @@ int main() {
     // Назначение обработчика нажатия клавиш
     glfwSetKeyCallback(window, key_callback);
     // назначение обработчика положения курсора
-    glfwSetCursorPosCallback(window, cursorPos_callback);
+    glfwSetCursorPosCallback(window, cursorPosSave_callback);
+    glfwSetScrollCallback(window, scroll_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
 
     // Инициализация GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
