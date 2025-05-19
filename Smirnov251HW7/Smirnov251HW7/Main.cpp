@@ -182,14 +182,90 @@ void readFromFile(const char *fileName) { // чтение сцены из файла fileName
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
+
+// матрица вращения относительно оси, заданной вектором n,
+// проходящей через точку P
+glm::mat4 rotateP(float theta, glm::vec3 n, glm::vec3 P) {
+    return glm::translate(P) * glm::rotate(theta, n) * glm::translate(-P);
+}
+
 // Обработчик нажатия клавиш
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mode) {
     if (action != GLFW_RELEASE) { // если клавиша нажата
         switch (key) {            // анализируем обрабатываемую клавишу
         case GLFW_KEY_ESCAPE:     // если клавиша - Escape
-            // устанавливаем, что окно window должно быть закрыто
-            glfwSetWindowShouldClose(window, GL_TRUE);
+            initWorkPars();
+            break;
+        case GLFW_KEY_W:
+            T = glm::lookAt(glm::vec3(0, 0, -1), glm::vec3(0, 0, -2),
+                            glm::vec3(0, 1, 0)) *
+                T;
+            break;
+        case GLFW_KEY_S:
+            T = glm::lookAt(glm::vec3(0, 0, 1), glm::vec3(0, 0, 0),
+                            glm::vec3(0, 1, 0)) *
+                T;
+            break;
+        case GLFW_KEY_A:
+            T = glm::lookAt(glm::vec3(-1, 0, 0), glm::vec3(-1, 0, -1),
+                            glm::vec3(0, 1, 0)) *
+                T;
+            break;
+        case GLFW_KEY_R: {
+            glm::vec3 u_new = glm::mat3(glm::rotate(0.1f, glm::vec3(0, 0, 1))) *
+                              glm::vec3(0, 1, 0);
+            T = glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1), u_new) * T;
+            break;
+        }
+        case GLFW_KEY_T: {
+            if (mode == GLFW_MOD_SHIFT) {
+                // матрица вращения относительно точки P
+                glm::mat4 M =
+                    rotateP(0.1, glm::vec3(1, 0, 0), glm::vec3(0, 0, -dist));
+                glm::vec3 u_new =
+                    glm::mat3(M) *
+                    glm::vec3(0, 1, 0); // вращение направления вверх
+                glm::vec3 S_new = glm::vec3(
+                    M * glm::vec4(0, 0, 0, 1)); // вращение начала координат
+                // переход к СКН в которой начало координат в новой точке, а
+                // направление наблюдения - в точку P
+                T = glm::lookAt(S_new, glm::vec3(0, 0, -dist), u_new) * T;
+            }
+            else {
+                glm::mat4 M = glm::rotate(
+                    0.1f,
+                    glm::vec3(1, 0, 0)); // матрица вращения относительно Ox
+                glm::vec3 u_new =
+                    glm::mat3(M) *
+                    glm::vec3(0, 1, 0); // вращение направления вверх
+                // вращение точки, в которую смотрит наблюдатель
+                glm::vec3 P_new = glm::vec3(M * glm::vec4(0, 0, -1, 1));
+                T = glm::lookAt(glm::vec3(0, 0, 0), P_new, u_new) * T;
+            }
+            break;
+        }
+        case GLFW_KEY_I:
+            if (mode == GLFW_MOD_SHIFT) {
+                t -= 1;
+            }
+            else {
+                t += 1;
+            }
+            break;
+        case GLFW_KEY_J:
+            if (mode == GLFW_MOD_SHIFT) {
+                l += 1;
+            }
+            else {
+                l -= 1;
+            }
+            break;
+        case GLFW_KEY_1:
+            pType = Ortho;
+            break;
+        case GLFW_KEY_3:
+            pType = Perspective;
             break;
         default:
             break;
@@ -239,8 +315,9 @@ int main() {
     const char *vertexShaderSource =
         "#version 330 core\n"
         "layout (location = 0) in vec3 position;\n"
+        "uniform mat4 clipView;\n"
         "void main() {\n"
-        " gl_Position = vec4(position.x, position.y, position.z, 1.0);\n"
+        " gl_Position = clipView * vec4(position, 1.0);\n"
         "}\0";
     //=====================================================================
     GLuint vertexShader; // шейдерный объект - вершинный шейдер
@@ -265,12 +342,12 @@ int main() {
     //======================================================
     // ФРАГМЕНТНЫЙ ШЕЙДЕР
     //======================================================
-    const char *fragmentShaderSource =
-        "#version 330 core\n"
-        "out vec4 color;\n"
-        "void main() {\n"
-        " color = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-        "}\n\0";
+    const char *fragmentShaderSource = "#version 330 core\n"
+                                       "out vec4 color;\n"
+                                       "uniform vec3 pathColor;\n"
+                                       "void main() {\n"
+                                       " color = vec4(pathColor, 1.0f);\n"
+                                       "}\n\0";
     //=======================================================
     GLuint fragmentShader; // шейдерный объект - фрагментный шейдер
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER); // создаем объект
@@ -307,6 +384,10 @@ int main() {
     // удаление шейдерных объектов
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+    // запрашиваем у программы shaderProgram расположение переменной pathColor
+    GLint pathColorLocation = glGetUniformLocation(shaderProgram, "pathColor");
+    // запрашиваем у программы shaderProgram расположение переменной clipView
+    GLint clipViewLocation = glGetUniformLocation(shaderProgram, "clipView");
 
     readFromFile("Smirnov251HW7\\triangle.txt");
     // пока окно window не должно закрыться
@@ -335,7 +416,15 @@ int main() {
                 models[k].figure; // список ломаных очередной модели
             glm::mat4 TM =
                 C * models[k].modelM; // матрица общего преобразования модели
+            // пересылка пересылка матрицы TM в переменную clipView шейдерной
+            // программы
+            glUniformMatrix4fv(clipViewLocation, 1, GL_FALSE,
+                               glm::value_ptr(TM));
             for (int i = 0; i < figure.size(); i++) {
+                // пересылка цвета линии в переменную pathColor шейдерной
+                // программы
+                glUniform3fv(pathColorLocation, 1,
+                             glm::value_ptr(figure[i].color));
                 glBindVertexArray(
                     figure[i].vertexArray); // делаем активным вершинный массив
                                             // i-й ломаной
