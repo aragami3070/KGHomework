@@ -1,4 +1,5 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include <Windows.h>
 #include <glad\glad.h>
 
 #include "Figure.h"
@@ -267,6 +268,34 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
         case GLFW_KEY_3:
             pType = Perspective;
             break;
+        case GLFW_KEY_F3: {
+            OPENFILENAMEW openFileDialog = {
+                0}; // явно используем W-версию (Unicode)
+            wchar_t fileName[MAX_PATH] = {0}; // wchar_t вместо char
+            // »нициализаци€ файлового диалога
+            ZeroMemory(&openFileDialog, sizeof(openFileDialog));
+            openFileDialog.lStructSize = sizeof(openFileDialog);
+            openFileDialog.hwndOwner = NULL;
+            openFileDialog.lpstrFile = fileName;
+            openFileDialog.lpstrFile[0] = '\0';
+            openFileDialog.nMaxFile = sizeof(fileName);
+            openFileDialog.lpstrFilter =
+                L"Text files (*.txt)\0*.txt\0All files 2007\0*.*\0";
+            openFileDialog.nFilterIndex = 1;
+            openFileDialog.lpstrFileTitle = NULL;
+            openFileDialog.nMaxFileTitle = 0;
+            openFileDialog.lpstrInitialDir = NULL;
+            openFileDialog.Flags =
+                OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+            // ¬вывод файлового диалога и получение результата
+            if (GetOpenFileName(&openFileDialog)) {
+                char narrowFileName[MAX_PATH];
+                WideCharToMultiByte(CP_UTF8, 0, fileName, -1, narrowFileName,
+                                    MAX_PATH, NULL, NULL);
+                readFromFile(narrowFileName);
+            }
+            break;
+        }
         default:
             break;
         }
