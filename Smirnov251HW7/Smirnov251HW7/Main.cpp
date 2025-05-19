@@ -32,6 +32,8 @@ float l, r, t, b;             // рабочие вспомогательные переменные
 // дл€ значений координат левой, правой,
 // нижней и верхней координаты в — Ќ
 enum projType { Ortho, Frustum, Perspective } pType; // тип трехмерной проекции
+double lastX, lastY; // последн€€ позици€ курсора
+bool mouseBtnPressed = false;
 //=============================================================================
 void initWorkPars() { // инициализаци€ рабочих параметров камеры
     n = near_view;
@@ -190,6 +192,44 @@ glm::mat4 rotateP(float theta, glm::vec3 n, glm::vec3 P) {
     return glm::translate(P) * glm::rotate(theta, n) * glm::translate(-P);
 }
 
+// обработчик положени€ курсора
+void cursorPos_callback(GLFWwindow *window, double xpos, double ypos) {
+    if (mouseBtnPressed) {
+        // матрица вращени€ относительно точки P
+        glm::mat4 M = rotateP(0.05, glm::vec3(lastY - ypos, lastX - xpos, 0),
+                              glm::vec3(0, 0, -dist));
+        glm::vec3 u_new =
+            glm::mat3(M) * glm::vec3(0, 1, 0); // вращение направлени€ вверх
+        glm::vec3 S_new =
+            glm::vec3(M * glm::vec4(0, 0, 0, 1)); // вращение начала координат
+        // переход к — Ќ в которой начало координат в новой точке, а направление
+        // наблюдени€ - в точку P
+        T = glm::lookAt(S_new, glm::vec3(0, 0, -dist), u_new) * T;
+
+        lastX = xpos;
+        lastY = ypos;
+    }
+    else {
+        // вычисл€ем вектор, задающий ось вращени€
+        glm::vec3 n = glm::vec3(lastY - ypos, lastX - xpos, 0);
+        // создаем матрицу вращени€
+        glm::mat4 M = glm::rotate(glm::length(n) * 0.002f, n);
+        // вращаем току (0, 0, -1), на которую смотрит наблюдатель
+        glm::vec3 P = M * glm::vec4(0, 0, -1, 1);
+        // добавл€ем к преобразовани€м переход к новой системе координат
+        // наблюдател€
+        T = glm::lookAt(glm::vec3(0), P, u) * T;
+        lastX = xpos;
+        lastY = ypos;
+    }
+}
+
+// обработчик позиции курсора при включенном курсоре
+void cursorPosSave_callback(GLFWwindow *window, double xpos, double ypos) {
+    lastX = xpos;
+    lastY = ypos;
+}
+
 // ќбработчик нажати€ клавиш
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mode) {
@@ -296,6 +336,16 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
             }
             break;
         }
+        case GLFW_KEY_F5:
+            if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                glfwSetCursorPosCallback(window, cursorPosSave_callback);
+            }
+            else {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                glfwSetCursorPosCallback(window, cursorPos_callback);
+            }
+            break;
         default:
             break;
         }
@@ -325,6 +375,8 @@ int main() {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     // Ќазначение обработчика нажати€ клавиш
     glfwSetKeyCallback(window, key_callback);
+    // назначение обработчика положени€ курсора
+    glfwSetCursorPosCallback(window, cursorPos_callback);
 
     // »нициализаци€ GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
